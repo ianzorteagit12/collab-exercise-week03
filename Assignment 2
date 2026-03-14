@@ -101,3 +101,16 @@ print(r2_immigration)
 # whereas the model with ln(immigration), has a lower R^2 value so it only explains 
 # 60.5 % of the variation in the GDP. We can say that the model with the surnames
 # has a higher predictive power. 
+
+Part 3: 
+
+# The assumption for SLR: 4 ( Zero Conditional Mean)has to hold so that
+# the estimators of the coeffeiceints on surname and ln(immigration) are unbiasd. 
+# Therefore the explanatory variable should be uncorrolated with the error term so the error term
+# ui has to have an expected value of 0 given any value of X. In this example we can conclude that SlR. 4 
+# doesnt really hold as many important determinants of GDP are omitted. An example of some of the 
+# determinants could be population size or productivity , therefore these factors could be mistakelny be corrolated
+# to immigration levels or the share of surnames in a canton. therefore if we ommit such determinants then the 
+# explanatory variables may be correlated to the error term which leads to ommitted variable bias. Consequently
+# the estimated coefficients wouldnt be unbiased estimates, we should then treat them as associations 
+#rather than causal effects. 
