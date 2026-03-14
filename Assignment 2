@@ -1,0 +1,103 @@
+library(readr)
+library(dplyr)
+getwd()
+setwd("/Users/ice.mice12/documents/DAII/Exercise2") #change the wd
+#read in the csv files
+
+df_clean <- read_delim("ps2_cantons_cleaned.csv", delim = ";") #need to use a delimiter
+head(df_clean)
+df_clean_names <- read_delim("ps2_cantons_surnames.csv", delim = ",")
+
+# Fix canton spelling
+df_clean$canton[df_clean$canton == "Berne"] <- "Bern"
+df_clean_names$canton[df_clean_names$canton == "Berne"] <- "Bern"
+
+# Check if there are any missing values in the columns 
+colSums(is.na(df_clean))
+colSums(is.na(df_clean_names)) 
+
+# Add the new column 
+df_clean_names <- df_clean_names %>%
+  mutate(surname = share_mueller + share_maier)
+
+# Keep only the columns called Surname and Canton
+df_clean_names <- df_clean_names %>%
+  select(surname, canton)
+
+# Part 2: Joining the 2 datasets 
+
+nrow(df_clean_names) # shows we have 27 rows even though CH has 26 Cantons
+df_clean_names <- df_clean_names[df_clean_names$canton != "Sri Lanka", ] # We remove Sri Lanka 
+
+# We want to make sure that they coincide for the join so here we have to change the spelling of "St. Gallen"
+
+df_clean_names$canton[df_clean_names$canton == "Sankt Gallen"] <- "St. Gallen"
+
+merged_df <- df_clean %>% # here we add the surname to the main dataset 
+  left_join(df_clean_names, by = "canton")
+merged_df
+
+# Part 3: Checking for missing values
+n_distinct(merged_df$canton) # shows whether there are 26 distinct cantons 
+sum(is.na(merged_df$surname))
+
+# Exercise 2
+# Assuming that SLR. 1-4 hold then we use in ( R-markdown)
+
+#$$
+#  gdp_i = \beta_0 + \beta_1 \cdot surname_i + \varepsilon_i
+#$$
+  
+# Part 2: using the LM to estimate the coefficients in the model 
+# so GDP is Y (dependent) and then surname is X (independent)
+model <- lm(gdp ~ surname, data = merged_df )
+print(model)
+
+# Interpretation: use in markdown 
+# - $\hat \beta_0$ (intercept): This intercept of 10 077 represents the predicted GDP (in million CHF)
+# when the share of Müller's and Maier's is 0 in a canton. This figure
+# represents a baseline GDP level for the regression.
+
+# - $\hat \beta_1$ : The surname coeeficient of 449550 indicates an increase by 1 unit 
+# is associated with an increase in gdp of 449550 million . Since here the surname is measures 
+# as a proportion of the permanent poulation of the surname share by 1 percentage point (e.g from 4% to 5%) would increase predicted
+# GDP by 4495 million CHF. 
+
+# Part 3
+# Average surname share across cantons
+avg_surname <- mean(merged_df$surname)
+
+# Find predicted GDP with the regression coefficents
+predicted_gdp <- predict(model, newdata = data.frame(surname = avg_surname))
+
+
+# compute predicted GDP using the regression coefficients
+predicted_avg_gdp <- as.numeric(model$coefficients[1] + 
+                                  model$coefficients[2] * avg_surname)
+
+print(predicted_avg_gdp)
+
+# If a canton has the average share of Müllers and Maiers then the model will predict,
+# on average it to have s a GDP of approximately 28,656 million CHF.
+
+# Exercise 3
+# Set up the Model
+model_log <- lm(gdp ~ log(immigration), data = merged_df)
+
+summary(model_log)
+# find the R^2 of the 2 models
+r2_surname <- summary(model)$r.squared
+r2_immigration <- summary(model_log)$r.squared
+
+print(r2_surname)
+print(r2_immigration)
+
+# What does R^2 measure 
+# r^2 measures how well our 2 regression model explains the variation in 
+#GDP across the different cantons based on 2 different factors giving for each a value of the fit. 
+
+# Amount of variation in GDP explained
+# In this case the model with "surname" explains about 64.3 % of the variation in GDP across the cantons,
+# whereas the model with ln(immigration), has a lower R^2 value so it only explains 
+# 60.5 % of the variation in the GDP. We can say that the model with the surnames
+# has a higher predictive power. 
