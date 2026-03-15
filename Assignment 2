@@ -4,11 +4,15 @@
 
 library(readr)
 library(dplyr)
-getwd()
-setwd("/Users/josepenarrieta/Downloads") #change the wd
 #read in the csv files
 
 df_clean <- read_delim("ps2_cantons_cleaned.csv", delim = ";") #need to use a delimiter
+
+Alternative:
+df_clean <- read_delim("ps2_cantons_cleaned.csv", delim = ";", show_col_types = FALSE) so that error not shown 
+
+
+
 head(df_clean)
 df_clean_names <- read_delim("ps2_cantons_surnames.csv", delim = ",")
 
@@ -51,9 +55,12 @@ sum(is.na(merged_df$surname))
 
 # Assuming that SLR. 1-4 hold then we use in ( R-markdown)
 
-#$$
-#  gdp_i = \beta_0 + \beta_1 \cdot surname_i + \varepsilon_i
-#$$
+$$
+gdp_i = \beta_0 + \beta_1 \cdot surname_i + u_i
+$$
+
+# changes this from epsilon to ui which matches the code given in lecture 
+
 
 # Part 2: using the LM to estimate the coefficients in the model 
 # so GDP is Y (dependent) and then surname is X (independent)
