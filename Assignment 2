@@ -68,14 +68,15 @@ model <- lm(gdp ~ surname, data = merged_df )
 print(model)
 
 # Interpretation: use in markdown 
-# - $\hat \beta_0$ (intercept): This intercept of 10 077 represents the predicted GDP (in million CHF)
-# when the share of Müller's and Maier's is 0 in a canton. This figure
+# - $\hat \beta_0$ (intercept): The intercept of 10,077 represents the predicted GDP (in million CHF)
+# when the share of the surnames Müller and Maier is 0 in a canton. Here the figure
 # represents a baseline GDP level for the regression.
 
-# - $\hat \beta_1$ : The surname coefficient of 449550 indicates an increase by 1 unit 
-# is associated with an increase in gdp of 449550 million. Since here the surname is measured 
-# as a proportion of the permanent population, an increase in the surname share by 1 percentage point (e.g from 4% to 5%) would increase predicted
-# GDP by 4495 million CHF. 
+
+# - $\hat \beta_1$ : Since here the surname coefficient is measured as a proportion of the permanent population,
+# an increase in the surname share by 1 percentage point (e.g from 4% to 5%) would increase predicted
+# GDP by 4495 million CHF, on average. 
+
 
 # Part 3
 # Average surname share across cantons
@@ -91,8 +92,8 @@ predicted_avg_gdp <- as.numeric(model$coefficients[1] +
 
 print(predicted_avg_gdp)
 
-# If a canton has the average share of Müllers and Maiers then the model will predict,
-# on average it to have a GDP of approximately 28,656 million CHF.
+# For a canton that has the average share of Müllers and Maiers then the model will predict,
+# on average, a GDP of approximately 28,656 million CHF.
 
 # ---------------------------------------------------------
 # Exercise 3: Comparison of two univariate models
@@ -110,30 +111,37 @@ print(r2_surname)
 print(r2_immigration)
 
 # What does R^2 measure 
-# r^2 measures how well our 2 regression model explains the variation in 
-#GDP across the different cantons based on 2 different factors giving for each a value of the fit. 
+# R^2 measures how much of the variation in GDP across swiss cantons can be explained by a
+# explanatory variable in the regression model. In our case we have 2 regression models explaining the variation in 
+# GDP giving us a value for the fit of the model on the data. 
+
 
 # Amount of variation in GDP explained
 # In this case the model with "surname" explains about 64.3 % of the variation in GDP across the cantons,
 # whereas the model with ln(immigration), has a lower R^2 value so it only explains 
 # 60.5 % of the variation in the GDP. We can say that the model with the surnames
-# has a higher predictive power. 
+# has a higher predictive power in this sample. 
 
 # Part 3: Discuss unbiasedness and SLR.4
 # The assumption for SLR.4 (Zero Conditional Mean) has to hold so that the estimators of the coefficients on surname and ln(immigration) are unbiased. 
-#Therefore the explanatory variable should be uncorrelated with the error term, so the error term u_i has to have an expected value of 0 given any value of X. 
-#In this example, we can conclude that SLR.4 doesnt really hold as many important determinants of GDP are omitted. 
-#An example of these hidden determinants could be the concentration of the financial sector or regional geography (e.g., being in the industrial Swiss-German region). 
-#These hidden economic factors heavily drive GDP and are simultaneously highly correlated with the percentage share of traditional Swiss-German surnames in a canton. 
-#If we omit such determinants, the explanatory variables become correlated with the error term, leading to omitted variable bias. Consequently, the estimated coefficients wouldnt be unbiased estimates, and we should treat them as associations rather than causal effects.
+# This means that the explanatory variable should be uncorrelated with the error term, so the error term u_i has to have an expected value of 0 given any value of X. 
+# In these models, this assumption of SLR. 4 is unlikely to hold, because many important determinants of GDP are omitted. 
+# Some examples of these hidden determinants could be the industry concentration or regional geography (e.g., being in the industrial Swiss-German region). 
+# Therefore these omitted factors could mistakenly be corrolated to immigration levels or the share of surnames in a canton.
+# If we omit such determinants, the explanatory variables may be correlated to the error term which leads to omitted variable bias.
+# Consequently, the estimated coefficients wouldnt be unbiased estimates, and we should treat them as associations rather than causal effects.
+
+
+
 
 # Part 4: Relationship between unbiasedness and predictive power (R^2)
 # The unbiasedness of a coefficient estimator and the predictive power of a model (measured by R^2) 
-# are fundamentally unrelated concepts. Unbiasedness strictly dictates that the estimation procedure 
-# correctly centers on the true population parameter on average, which requires the error term to be 
-# completely uncorrelated with the explanatory variables. Conversely, predictive power simply measures 
-# the proportion of sample variation the model explains; therefore, a perfectly unbiased model can still 
-# yield a very low R^2 if the underlying data contains a massive amount of unexplainable random noise.
+# measure different aspects of a regression model. Unbiasedness refers to whether the estimator 
+# correctly estimates the true population parameter on average, which depends on assumptions such as the SLR. 4.
+# Predictive power measured by R^2 indicates how weell the model explains the variation in the data but doesnt gaurantee
+# unbiased estimates.
+
+
 
 # ---------------------------------------------------------
 # Exercise 4: Univariate model without a constant
@@ -151,8 +159,11 @@ print("Coefficient for model without constant:")
 print(coef(model_no_intercept))
 
 # Part 3: Why did the coefficient on surname change compared to subexercise 2?
-# Forcing the regression line to pass strictly through the origin (0,0) removes the intercept from the OLS calculus minimization process. 
-# Because the line loses its ability to freely shift up or down to balance the residuals, the slope coefficient must physically tilt to awkwardly absorb the missing intercept's baseline value, which mathematically alters the final estimate.
+# The coefficient changes because, without a constant, the regression line has to pass through the origin (0,0) removes the intercept from the OLS calculus minimization process. 
+# The line then loses its ability to freely shift up or down to balance the residuals, the slope coefficient must physically tilt 
+# to awkwardly absorb the missing intercept's baseline value, which mathematically alters the final estimate.
+
+--> check again 
 
 # ---------------------------------------------------------
 # Exercise 5: Code your own OLS estimator
