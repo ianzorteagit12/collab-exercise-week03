@@ -4,8 +4,6 @@
 
 library(readr)
 library(dplyr)
-getwd()
-setwd("/Users/josepenarrieta/Downloads") #change the wd
 #read in the csv files
 
 df_clean <- read_delim("ps2_cantons_cleaned.csv", delim = ";") #need to use a delimiter
