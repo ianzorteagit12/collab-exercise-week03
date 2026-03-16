@@ -4,15 +4,11 @@
 
 library(readr)
 library(dplyr)
+getwd()
+setwd("/Users/josepenarrieta/Downloads") #change the wd
 #read in the csv files
 
 df_clean <- read_delim("ps2_cantons_cleaned.csv", delim = ";") #need to use a delimiter
-
-Alternative:
-df_clean <- read_delim("ps2_cantons_cleaned.csv", delim = ";", show_col_types = FALSE) so that error not shown 
-
-
-
 head(df_clean)
 df_clean_names <- read_delim("ps2_cantons_surnames.csv", delim = ",")
 
@@ -37,8 +33,12 @@ df_clean_names <- df_clean_names %>%
 nrow(df_clean_names) # shows we have 27 rows even though CH has 26 Cantons
 df_clean_names <- df_clean_names[df_clean_names$canton != "Sri Lanka", ] # We remove Sri Lanka 
 
-# We want to make sure that they coincide for the join so here we have to change the spelling of "St. Gallen"
+# Check to ensure canton names perfectly coincide before joining
+setdiff(df_clean$canton, df_clean_names$canton)
+setdiff(df_clean_names$canton, df_clean$canton)
 
+# The setdiff check reveals a mismatch: "St. Gallen" vs "Sankt Gallen". 
+# We now standardize the spelling so the join functions flawlessly:
 df_clean_names$canton[df_clean_names$canton == "Sankt Gallen"] <- "St. Gallen"
 
 merged_df <- df_clean %>% # here we add the surname to the main dataset 
@@ -53,14 +53,8 @@ sum(is.na(merged_df$surname))
 # Exercise 2: Estimation of an univariate model
 # ---------------------------------------------------------
 
-# Assuming that SLR. 1-4 hold then we use in ( R-markdown)
-
-$$
-gdp_i = \beta_0 + \beta_1 \cdot surname_i + u_i
-$$
-
-# changes this from epsilon to ui which matches the code given in lecture 
-
+# Part 1: State the regression equation
+# gdp_i = \beta_0 + \beta_1 \cdot surname_i + u_i
 
 # Part 2: using the LM to estimate the coefficients in the model 
 # so GDP is Y (dependent) and then surname is X (independent)
@@ -68,23 +62,18 @@ model <- lm(gdp ~ surname, data = merged_df )
 print(model)
 
 # Interpretation: use in markdown 
-# - $\hat \beta_0$ (intercept): The intercept of 10,077 represents the predicted GDP (in million CHF)
-# when the share of the surnames Müller and Maier is 0 in a canton. Here the figure
+# - $\hat \beta_0$ (intercept): This intercept of 10 077 represents the predicted GDP (in million CHF)
+# when the share of Müller's and Maier's is 0 in a canton. This figure
 # represents a baseline GDP level for the regression.
 
+# - $\hat \beta_1$ : The surname coefficient of 449550 indicates an increase by 1 unit 
+# is associated with an increase in gdp of 449550 million CHF. Since here the surname is measured 
+# as a proportion of the permanent population, an increase in the surname share by 1 percentage point (e.g from 4% to 5%) would increase predicted
+# GDP by 4495.5 million CHF.
 
-# - $\hat \beta_1$ : Since here the surname coefficient is measured as a proportion of the permanent population,
-# an increase in the surname share by 1 percentage point (e.g from 4% to 5%) would increase predicted
-# GDP by 4495 million CHF, on average. 
-
-
-# Part 3
-# Average surname share across cantons
-avg_surname <- mean(merged_df$surname)
-
-# Find predicted GDP with the regression coefficents
-predicted_gdp <- predict(model, newdata = data.frame(surname = avg_surname))
-
+# Part 3: Use the estimated model to predict GDP
+# Calculate the population-weighted average surname share across Switzerland
+avg_surname <- weighted.mean(merged_df$surname, w = merged_df$population, na.rm = TRUE)
 
 # compute predicted GDP using the regression coefficients
 predicted_avg_gdp <- as.numeric(model$coefficients[1] + 
@@ -92,8 +81,8 @@ predicted_avg_gdp <- as.numeric(model$coefficients[1] +
 
 print(predicted_avg_gdp)
 
-# For a canton that has the average share of Müllers and Maiers then the model will predict,
-# on average, a GDP of approximately 28,656 million CHF.
+# Explanation of the predicted change:
+# Compared to a baseline canton with no Müllers or Maiers, moving to the population-weighted average surname share triggers a predicted increase in GDP of approximately 41,435 million CHF.
 
 # ---------------------------------------------------------
 # Exercise 3: Comparison of two univariate models
@@ -111,37 +100,28 @@ print(r2_surname)
 print(r2_immigration)
 
 # What does R^2 measure 
-# R^2 measures how much of the variation in GDP across swiss cantons can be explained by a
-# explanatory variable in the regression model. In our case we have 2 regression models explaining the variation in 
-# GDP giving us a value for the fit of the model on the data. 
-
+# r^2 measures how well our 2 regression model explains the variation in 
+#GDP across the different cantons based on 2 different factors giving for each a value of the fit. 
 
 # Amount of variation in GDP explained
 # In this case the model with "surname" explains about 64.3 % of the variation in GDP across the cantons,
 # whereas the model with ln(immigration), has a lower R^2 value so it only explains 
 # 60.5 % of the variation in the GDP. We can say that the model with the surnames
-# has a higher predictive power in this sample. 
+# has a higher predictive power. 
 
 # Part 3: Discuss unbiasedness and SLR.4
-# The assumption for SLR.4 (Zero Conditional Mean) has to hold so that the estimators of the coefficients on surname and ln(immigration) are unbiased. 
-# This means that the explanatory variable should be uncorrelated with the error term, so the error term u_i has to have an expected value of 0 given any value of X. 
-# In these models, this assumption of SLR. 4 is unlikely to hold, because many important determinants of GDP are omitted. 
-# Some examples of these hidden determinants could be the industry concentration or regional geography (e.g., being in the industrial Swiss-German region). 
-# Therefore these omitted factors could mistakenly be corrolated to immigration levels or the share of surnames in a canton.
-# If we omit such determinants, the explanatory variables may be correlated to the error term which leads to omitted variable bias.
-# Consequently, the estimated coefficients wouldnt be unbiased estimates, and we should treat them as associations rather than causal effects.
-
-
-
+# The estimators for both surname and ln(immigration) are heavily biased because SLR.4 (Zero Conditional Mean) fails due to omitted variable bias. To be unbiased, the explanatory variables must be uncorrelated with the error term u_i. 
+# For the surname model, hidden determinants like financial sector concentration and regional geography heavily drive GDP and are simultaneously correlated with the percentage share of Swiss-German surnames. 
+# For the immigration model, absolute population size is a massive omitted variable; naturally larger cantons attract higher absolute numbers of immigrants while inherently generating higher GDPs. 
+# Because we omit these critical determinants in both univariate models, the explanatory variables become directly correlated with the error term. Consequently, neither coefficient is an unbiased causal estimate; they are merely associations.
 
 # Part 4: Relationship between unbiasedness and predictive power (R^2)
 # The unbiasedness of a coefficient estimator and the predictive power of a model (measured by R^2) 
-# measure different aspects of a regression model. Unbiasedness refers to whether the estimator 
-# correctly estimates the true population parameter on average, which depends on assumptions such as the SLR. 4.
-# Predictive power measured by R^2 indicates how weell the model explains the variation in the data but doesnt gaurantee
-# unbiased estimates.
-
-
+# are fundamentally unrelated concepts. Unbiasedness strictly dictates that the estimation procedure 
+# correctly centers on the true population parameter on average, which requires the error term to be 
+# completely uncorrelated with the explanatory variables. Conversely, predictive power simply measures 
+# the proportion of sample variation the model explains; therefore, a perfectly unbiased model can still 
+# yield a very low R^2 if the underlying data contains a massive amount of unexplainable random noise.
 
 # ---------------------------------------------------------
 # Exercise 4: Univariate model without a constant
@@ -159,11 +139,8 @@ print("Coefficient for model without constant:")
 print(coef(model_no_intercept))
 
 # Part 3: Why did the coefficient on surname change compared to subexercise 2?
-# The coefficient changes because, without a constant, the regression line has to pass through the origin (0,0) removes the intercept from the OLS calculus minimization process. 
-# The line then loses its ability to freely shift up or down to balance the residuals, the slope coefficient must physically tilt 
-# to awkwardly absorb the missing intercept's baseline value, which mathematically alters the final estimate.
-
---> check again 
+# Forcing the regression line to pass strictly through the origin (0,0) removes the intercept from the OLS calculus minimization process. 
+# Because the line loses its ability to freely shift up or down to balance the residuals, the slope coefficient must physically tilt to awkwardly absorb the missing intercept's baseline value, which mathematically alters the final estimate.
 
 # ---------------------------------------------------------
 # Exercise 5: Code your own OLS estimator
@@ -172,7 +149,7 @@ print(coef(model_no_intercept))
 # Part 1 & 3: Create the custom function with inputs y, x, and a boolean for the constant
 custom_ols <- function(y, x, add_constant = TRUE) {
   
-  # Check the boolean condition: Does the user want an intercept?
+  # Evaluate the boolean parameter to determine if the model includes a constant
   if (add_constant == TRUE) {
     
     # Step A: Calculate the sample averages
