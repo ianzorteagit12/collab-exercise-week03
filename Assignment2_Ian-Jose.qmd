@@ -97,11 +97,22 @@ In this case the model with "surname" explains about 64.3 % of the variation in 
 
 **Part 3: Discuss unbiasedness and SLR.4**
 
-The estimators for both surname and ln(immigration) are heavily biased because SLR.4 (Zero Conditional Mean) fails due to omitted variable bias. To be unbiased, the explanatory variables must be uncorrelated with the error term $u_i$. For the surname model, hidden determinants like financial sector concentration and regional geography heavily drive GDP and are simultaneously correlated with the percentage share of Swiss-German surnames. For the immigration model, absolute population size is a massive omitted variable; naturally larger cantons attract higher absolute numbers of immigrants while inherently generating higher GDPs. Because we omit these critical determinants in both univariate models, the explanatory variables become directly correlated with the error term. Consequently, neither coefficient is an unbiased causal estimate; they are merely associations.
+The assumption for SLR. 4 ( Zero Conditional Mean)has to hold so that
+the estimators of the coeffeiceints on surname and ln(immigration) are unbiased. 
+To be unbiased, the explanatory variables must be uncorrelated with the error term u_i. 
+In this case we find that the assumption of SLR: 4 doesnt tend to hold due to omission.
+For the surname model, hidden determinants like financial sector concentration and regional geography heavily 
+drive GDP and could simultaneously mistakenly be correlated with the percentage share of Swiss-German surnames. 
+For the immigration model, absolute population size is a omitted variable; larger cantons attract 
+higher absolute numbers of immigrants while also generating higher GDPs. Because we omit these critical determinants in both univariate models, the explanatory variables become directly correlated with the error term. Consequently, neither coefficient is an unbiased causal estimate, so we should treat them as though they are merely associations.
 
 **Part 4: Relationship between unbiasedness and predictive power (**$R^2$)
 
-The unbiasedness of a coefficient estimator and the predictive power of a model (measured by $R^2$) are fundamentally unrelated concepts. Unbiasedness strictly dictates that the estimation procedure correctly centers on the true population parameter on average, which requires the error term to be completely uncorrelated with the explanatory variables. Conversely, predictive power simply measures the proportion of sample variation the model explains; therefore, a perfectly unbiased model can still yield a very low $R^2$ if the underlying data contains a massive amount of unexplainable random noise.
+The unbiasedness of a coefficient estimator and the predictive power of a model (measured by R^2) 
+are fundamentally unrelated concepts. Unbiasedness strictly dictates that the estimation procedure 
+correctly centers on the true population parameter on average, which requires the error term to be 
+completely uncorrelated with the explanatory variables. Whereas, predictive power measures 
+the proportion of sample variation the model explains but it doesn't gaurantee an unbiased estimate.
 
 ## Exercise 4: Univariate model without a constant
 
