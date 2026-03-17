@@ -1,0 +1,167 @@
+---
+title: "Data Analytics II - Assignment 2"
+author: "Jose Penarrieta, Ian André Zortea"
+format:
+  html:
+    embed-resources: true
+editor: visual
+---
+
+## Exercise 1: Data preparation
+
+```{r, message=FALSE, warning=FALSE}
+library(readr)
+library(dplyr)
+
+#read in the csv files
+df_clean <- read_delim("ps2_cantons_cleaned.csv", delim = ";")
+head(df_clean)
+df_clean_names <- read_delim("ps2_cantons_surnames.csv", delim = ",")
+
+df_clean$canton[df_clean$canton == "Berne"] <- "Bern"
+df_clean_names$canton[df_clean_names$canton == "Berne"] <- "Bern"
+
+colSums(is.na(df_clean))
+colSums(is.na(df_clean_names))
+
+df_clean_names <- df_clean_names %>%
+  mutate(surname = share_mueller + share_maier) %>%
+  select(surname, canton)
+
+nrow(df_clean_names)
+df_clean_names <- df_clean_names[df_clean_names$canton != "Sri Lanka", ]
+
+setdiff(df_clean$canton, df_clean_names$canton)
+setdiff(df_clean_names$canton, df_clean$canton)
+
+df_clean_names$canton[df_clean_names$canton == "Sankt Gallen"] <- "St. Gallen"
+
+merged_df <- df_clean %>%
+  left_join(df_clean_names, by = "canton")
+
+n_distinct(merged_df$canton)
+sum(is.na(merged_df$surname))
+```
+
+## Exercise 2: Estimation of an univariate model
+
+**Part 1: State the regression equation**
+
+$$gdp_i = \beta_0 + \beta_1 \cdot surname_i + u_i$$
+
+**Part 2: using the LM to estimate the coefficients in the model**
+
+```{r}
+model <- lm(gdp ~ surname, data = merged_df )
+print(model)
+```
+
+**Interpretation:**
+
+-   $\hat{\beta}_0$ (intercept): This intercept of 10 077 represents the predicted GDP (in million CHF) when the share of Müller's and Maier's is 0 in a canton. This figure represents a baseline GDP level for the regression.
+
+-   $\hat{\beta}_1$: The surname coefficient of 449550 indicates an increase by 1 unit is associated with an increase in gdp of 449550 million CHF. Since here the surname is measured as a proportion of the permanent population, an increase in the surname share by 1 percentage point (e.g from 4% to 5%) would increase predicted GDP by 4495.5 million CHF.
+
+**Part 3: Use the estimated model to predict GDP**
+
+```{r}
+avg_surname <- weighted.mean(merged_df$surname, w = merged_df$population, na.rm = TRUE)
+predicted_avg_gdp <- as.numeric(model$coefficients[1] + model$coefficients[2] * avg_surname)
+print(predicted_avg_gdp)
+```
+
+**Explanation of the predicted change:**
+
+Compared to a baseline canton with no Müllers or Maiers, moving to the population-weighted average surname share triggers a predicted increase in GDP of approximately 41,435 million CHF.
+
+## Exercise 3: Comparison of two univariate models
+
+```{r}
+model_log <- lm(gdp ~ log(immigration), data = merged_df)
+summary(model_log)
+
+r2_surname <- summary(model)$r.squared
+r2_immigration <- summary(model_log)$r.squared
+
+print(r2_surname)
+print(r2_immigration)
+```
+
+**What does** $R^2$ measure?
+
+$R^2$ measures how well our 2 regression model explains the variation in GDP across the different cantons based on 2 different factors giving for each a value of the fit.
+
+**Amount of variation in GDP explained:**
+
+In this case the model with "surname" explains about 64.3 % of the variation in GDP across the cantons, whereas the model with ln(immigration) has a lower $R^2$ value so it only explains 60.5 % of the variation in the GDP. We can say that the model with the surnames has a higher predictive power.
+
+**Part 3: Discuss unbiasedness and SLR.4**
+
+The estimators for both surname and ln(immigration) are heavily biased because SLR.4 (Zero Conditional Mean) fails due to omitted variable bias. To be unbiased, the explanatory variables must be uncorrelated with the error term $u_i$. For the surname model, hidden determinants like financial sector concentration and regional geography heavily drive GDP and are simultaneously correlated with the percentage share of Swiss-German surnames. For the immigration model, absolute population size is a massive omitted variable; naturally larger cantons attract higher absolute numbers of immigrants while inherently generating higher GDPs. Because we omit these critical determinants in both univariate models, the explanatory variables become directly correlated with the error term. Consequently, neither coefficient is an unbiased causal estimate; they are merely associations.
+
+**Part 4: Relationship between unbiasedness and predictive power (**$R^2$)
+
+The unbiasedness of a coefficient estimator and the predictive power of a model (measured by $R^2$) are fundamentally unrelated concepts. Unbiasedness strictly dictates that the estimation procedure correctly centers on the true population parameter on average, which requires the error term to be completely uncorrelated with the explanatory variables. Conversely, predictive power simply measures the proportion of sample variation the model explains; therefore, a perfectly unbiased model can still yield a very low $R^2$ if the underlying data contains a massive amount of unexplainable random noise.
+
+## Exercise 4: Univariate model without a constant
+
+**Part 1: State the formula of this specific univariate linear model**
+
+$$gdp_i = \tilde{\beta}_1 \cdot surname_i + \tilde{u}_i$$
+
+**Part 2: Estimate the model coefficient using the lm-function and report it**
+
+```{r}
+model_no_intercept <- lm(gdp ~ 0 + surname, data = merged_df)
+print("Coefficient for model without constant:")
+print(coef(model_no_intercept))
+```
+
+**Part 3: Why did the coefficient on surname change compared to subexercise 2?**
+
+Forcing the regression line to pass strictly through the origin (0,0) removes the intercept from the OLS calculus minimization process. Because the line loses its ability to freely shift up or down to balance the residuals, the slope coefficient must physically tilt to artificially absorb the missing intercept's baseline value, which mathematically alters the final estimate.
+
+## Exercise 5: Code your own OLS estimator
+
+**Part 1 & 3: Create the custom function with inputs y, x, and a boolean for the constant**
+
+```{r}
+custom_ols <- function(y, x, add_constant = TRUE) {
+  if (add_constant == TRUE) {
+    mean_y <- mean(y)
+    mean_x <- mean(x)
+    numerator <- sum((x - mean_x) * (y - mean_y))
+    denominator <- sum((x - mean_x)^2)
+    beta_1 <- numerator / denominator
+    beta_0 <- mean_y - (beta_1 * mean_x)
+    return(c(Intercept = beta_0, Surname_Slope = beta_1))
+  } else {
+    numerator_no_intercept <- sum(x * y)
+    denominator_no_intercept <- sum(x^2)
+    beta_1_no_intercept <- numerator_no_intercept / denominator_no_intercept
+    return(c(Surname_Slope = beta_1_no_intercept))
+  }
+}
+```
+
+**Part 2: Verify the function against the lm() model from Exercise 2**
+
+```{r}
+my_results_intercept <- custom_ols(y = merged_df$gdp, x = merged_df$surname, add_constant = TRUE)
+print("--- Verification: Custom OLS vs lm() WITH Intercept ---")
+print("Custom Function Output:")
+print(my_results_intercept)
+print("Built-in lm() Output:")
+print(coef(model))
+```
+
+**Part 3 Verification: Verify against the no-intercept model from Exercise 4**
+
+```{r}
+my_results_no_intercept <- custom_ols(y = merged_df$gdp, x = merged_df$surname, add_constant = FALSE)
+print("--- Verification: Custom OLS vs lm() WITHOUT Intercept ---")
+print("Custom Function Output:")
+print(my_results_no_intercept)
+print("Built-in lm() Output:")
+print(coef(model_no_intercept))
+```
