@@ -1,0 +1,93 @@
+---
+title: "Assignment 3"
+format: html
+editor: visual
+---
+
+## Exercise 1
+
+We substitute the transformation $Q_i = X_i - 10$ into the estimated model. (Using "hats" to properly denote estimated coefficients and residuals).
+
+Isolate $X_i$: $$X_i = Q_i + 10$$
+
+Substitute $X_i$ into the estimated equation $Y_{i,1} = \hat{\beta}_0 + \hat{\beta}_1 X_i + \hat{u}_i$: $$Y_{i,1} = \hat{\beta}_0 + \hat{\beta}_1(Q_i + 10) + \hat{u}_i$$
+
+Expand and regroup: $$Y_{i,1} = (\hat{\beta}_0 + 10\hat{\beta}_1) + \hat{\beta}_1 Q_i + \hat{u}_i$$
+
+Matching this to the new estimated model $Y_{i,1} = \hat{\delta}_0 + \hat{\delta}_1 Q_i + \hat{u}_i$, we map the estimators:
+
+$\hat{\delta}_1 = \hat{\beta}_1$
+
+$\hat{\delta}_0 = \hat{\beta}_0 + 10\hat{\beta}_1$
+
+*(By identical derivation for* $Y_{i,2}$, the new slope is $\hat{\alpha}_1$ and intercept is $\hat{\alpha}_0 + 10\hat{\alpha}_1$.)
+
+When a constant is subtracted from a regressor, the slope estimator remains completely unchanged because the rate of change is identical. However, the intercept estimator shifts by the constant multiplied by the slope to absorb the shifted baseline.
+
+------------------------------------------------------------------------
+
+## Exercise 2
+
+### 2.1(i) Data Import and Cleaning
+
+```{r}
+#| message: false
+#| warning: false
+
+# 1. Load the required packages
+library(dplyr)
+library(readr)
+
+# 2. Import the dataset 
+df <- read_csv("Downloads/distances_birthtown_up.csv")
+
+# 3. Clean the data and generate the new variable
+df_clean <- df %>%
+  mutate(
+    income_parent1 = ifelse(income_parent1 == -9999999, NA, income_parent1),
+    income_parent2 = ifelse(income_parent2 == -9999999, NA, income_parent2),
+    medicine_dummy = ifelse(medicine == "Yes", 1, 0),
+    income_parents = income_parent1 + income_parent2
+  )
+
+# 4. Explore the cleaned data
+summary(df_clean)
+```
+
+### 2.1(ii) Regression Equation and Interpretation
+
+The multiple linear regression equation to jointly investigate these relationships is:
+
+$$medicine\_dummy_i = \beta_0 + \beta_1 travel\_time_i + \beta_2 income\_parents_i + u_i$$
+
+**Interpretation of Coefficients:**
+
+-   $\beta_0$ (Intercept): This represents the predicted probability of an individual working in the medical industry if their travel time to Country B is zero hours and their parents' combined income is zero dollars.
+
+-   $\beta_1$ (travel_time): This is the ceteris paribus effect of travel time. It measures the predicted change in the probability of working in the medical field for each additional hour of travel time to Country B, holding parents' income constant.
+
+-   $\beta_2$ (income_parents): This is the ceteris paribus effect of parental wealth. It measures the predicted change in the probability of working in the medical field for each additional \$1,000 of combined parental income, holding travel time constant.
+
+Because our dependent variable ($medicine\_dummy$) is a binary indicator (0 or 1), this represents a Linear Probability Model (LPM), meaning the coefficients explicitly measure changes in probability.
+
+### 2.1(iii) Model Estimation and Comparison
+
+```{r}
+# Estimate the joint regression (from part ii)
+model_joint <- lm(medicine_dummy ~ travel_time + income_parents, data = df_clean)
+
+# Estimate the simple regression (from part iii)
+model_simple <- lm(medicine_dummy ~ income_parents, data = df_clean)
+
+# Print the summaries to view the coefficients
+summary(model_joint)
+summary(model_simple)
+```
+
+In the simple model, the point estimate for `income_parents` is 0.0007874. In the joint model, this coefficient drops substantially to 0.0002823.
+
+**Statistical Difference:** Both estimates are statistically significant (p \< 0.05), but the magnitude drops by over 60% when adding `travel_time`, indicating a statistically meaningful shift in the distribution.
+
+**Economic Difference:** The difference is highly economically significant. The simple model implies an effect nearly three times larger than the joint model, which drastically overstates the practical, real-world impact of parental wealth on medical career probability.
+
+**Explanation:** This difference is caused by Omitted Variable Bias (OVB) in the simple model. If wealthier families tend to live closer to Country B (a negative correlation between income and travel time), and shorter travel times increase the likelihood of medical careers, omitting travel time creates a positive bias. The simple model improperly credits `income_parents` for the unobserved benefits of having a shorter commute.
