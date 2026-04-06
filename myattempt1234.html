@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Assignment 3</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="myattempt1234_files/libs/clipboard/clipboard.min.js"></script>
+<script src="myattempt1234_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="myattempt1234_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="myattempt1234_files/libs/quarto-html/popper.min.js"></script>
+<script src="myattempt1234_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="myattempt1234_files/libs/quarto-html/anchor.min.js"></script>
+<link href="myattempt1234_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="myattempt1234_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="myattempt1234_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="myattempt1234_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="myattempt1234_files/libs/bootstrap/bootstrap-81267100e462c21b3d6c0d5bf76a3417.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="fullcontent quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Assignment 3</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="exercise-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1">Exercise 1</h2>
+<p>We start from the estimated regression:</p>
+<p><span class="math display">\[
+Y_{i,1} = \hat{\beta}_0 + \hat{\beta}_1 X_i + \hat{u}_i
+\]</span></p>
+<p>and the transformed regressor:</p>
+<p><span class="math display">\[
+Q_i = X_i - 10
+\]</span></p>
+<p>If we solve for <span class="math inline">\(X_i\)</span>, we obtain:</p>
+<p><span class="math display">\[
+X_i = Q_i + 10
+\]</span></p>
+<p>We then substitute this into the estimated regression which gives:</p>
+<p><span class="math display">\[
+Y_{i,1} = \hat{\beta}_0 + \hat{\beta}_1(Q_i + 10) + \hat{u}_i
+\]</span></p>
+<p>Expanding and rearranging:</p>
+<p><span class="math display">\[
+Y_{i,1} = \hat{\beta}_0 + \hat{\beta}_1 Q_i + 10\hat{\beta}_1 + \hat{u}_i
+\]</span></p>
+<p><span class="math display">\[
+Y_{i,1} = (\hat{\beta}_0 + 10\hat{\beta}_1) + \hat{\beta}_1 Q_i + \hat{u}_i
+\]</span></p>
+<p>Now compare this with the transformed estimated regression:</p>
+<p><span class="math display">\[
+Y_{i,1} = \hat{\delta}_0 + \hat{\delta}_1 Q_i + \hat{u}_i
+\]</span></p>
+<p>By matching coefficients, we obtain:</p>
+<p><span class="math display">\[
+\hat{\delta}_1 = \hat{\beta}_1
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\hat{\delta}_0 = \hat{\beta}_0 + 10\hat{\beta}_1
+\]</span></p>
+<section id="conclusion" class="level3">
+<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
+<p>When a constant is subtracted from a regressor, the slope estimator remains completely unaffected because the rate of change is identical. However, the intercept estimator shifts by the constant multiplied by the slope to absorb the shifted baseline.</p>
+<hr>
+</section>
+</section>
+<section id="exercise-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2">Exercise 2</h2>
+<section id="i-data-import-and-cleaning" class="level3">
+<h3 class="anchored" data-anchor-id="i-data-import-and-cleaning">2.1(i) Data Import and Cleaning</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Load the required packages</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Import the dataset </span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"distances_birthtown_up.csv"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Inspect the data</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">df</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">13389</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">medicine</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 10%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 7%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6705.82</td>
+<td style="text-align: right;">3871.07</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3354.00</td>
+<td style="text-align: right;">6707.00</td>
+<td style="text-align: right;">10059.00</td>
+<td style="text-align: right;">13407.00</td>
+<td style="text-align: left;">▇▇▇▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">region</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.95</td>
+<td style="text-align: right;">2.43</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+<td style="text-align: right;">4.00</td>
+<td style="text-align: right;">14.00</td>
+<td style="text-align: left;">▇▅▂▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">travel_time</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.95</td>
+<td style="text-align: right;">1.05</td>
+<td style="text-align: right;">-4.01</td>
+<td style="text-align: right;">1.28</td>
+<td style="text-align: right;">1.97</td>
+<td style="text-align: right;">2.64</td>
+<td style="text-align: right;">4.99</td>
+<td style="text-align: left;">▁▁▃▇▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">income</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-109710.54</td>
+<td style="text-align: right;">1042094.38</td>
+<td style="text-align: right;">-9999999.00</td>
+<td style="text-align: right;">58.67</td>
+<td style="text-align: right;">85.65</td>
+<td style="text-align: right;">109.94</td>
+<td style="text-align: right;">224.90</td>
+<td style="text-align: left;">▁▁▁▁▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">income_parent1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-123941.61</td>
+<td style="text-align: right;">1106595.42</td>
+<td style="text-align: right;">-9999999.00</td>
+<td style="text-align: right;">22.36</td>
+<td style="text-align: right;">44.38</td>
+<td style="text-align: right;">59.95</td>
+<td style="text-align: right;">160.27</td>
+<td style="text-align: left;">▁▁▁▁▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">income_parent2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">-112747.70</td>
+<td style="text-align: right;">1056012.54</td>
+<td style="text-align: right;">-9999999.00</td>
+<td style="text-align: right;">17.48</td>
+<td style="text-align: right;">31.64</td>
+<td style="text-align: right;">47.20</td>
+<td style="text-align: right;">121.94</td>
+<td style="text-align: left;">▁▁▁▁▇</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Clean the data and generate the new variable</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_clean <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">income_parent1 =</span> <span class="fu">ifelse</span>(income_parent1 <span class="sc">==</span> <span class="sc">-</span><span class="dv">9999999</span>, <span class="cn">NA</span>, income_parent1),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">income_parent2 =</span> <span class="fu">ifelse</span>(income_parent2 <span class="sc">==</span> <span class="sc">-</span><span class="dv">9999999</span>, <span class="cn">NA</span>, income_parent2),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">medicine_dummy =</span> <span class="fu">ifelse</span>(medicine <span class="sc">==</span> <span class="st">"Yes"</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">income_parents =</span> income_parent1 <span class="sc">+</span> income_parent2</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Explore the cleaned data</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(df_clean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       id            region        travel_time         income          
+ Min.   :    1   Min.   : 0.000   Min.   :-4.009   Min.   :-9999999.0  
+ 1st Qu.: 3354   1st Qu.: 1.000   1st Qu.: 1.277   1st Qu.:      58.7  
+ Median : 6707   Median : 2.000   Median : 1.965   Median :      85.7  
+ Mean   : 6706   Mean   : 2.951   Mean   : 1.948   Mean   : -109710.5  
+ 3rd Qu.:10059   3rd Qu.: 4.000   3rd Qu.: 2.645   3rd Qu.:     109.9  
+ Max.   :13407   Max.   :14.000   Max.   : 4.994   Max.   :     224.9  
+                                                                       
+ income_parent1   income_parent2     medicine         medicine_dummy  
+ Min.   :  0.00   Min.   :  0.00   Length:13389       Min.   :0.0000  
+ 1st Qu.: 23.63   1st Qu.: 18.36   Class :character   1st Qu.:0.0000  
+ Median : 44.76   Median : 31.94   Mode  :character   Median :0.0000  
+ Mean   : 41.26   Mean   : 31.79                      Mean   :0.4292  
+ 3rd Qu.: 60.12   3rd Qu.: 47.35                      3rd Qu.:1.0000  
+ Max.   :160.27   Max.   :121.94                      Max.   :1.0000  
+ NA's   :166      NA's   :151                                         
+ income_parents  
+ Min.   :  0.00  
+ 1st Qu.: 46.33  
+ Median : 71.64  
+ Mean   : 73.08  
+ 3rd Qu.: 99.03  
+ Max.   :220.46  
+ NA's   :316     </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(df_clean))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 633</code></pre>
+</div>
+</div>
+</section>
+<section id="ii-regression-equation-and-interpretation" class="level3">
+<h3 class="anchored" data-anchor-id="ii-regression-equation-and-interpretation">2.1(ii) Regression Equation and Interpretation</h3>
+<p>The multiple linear regression equation to jointly investigate these relationships is:</p>
+<p><span class="math display">\[medicine\_dummy_i = \beta_0 + \beta_1 travel\_time_i + \beta_2 income\_parents_i + u_i\]</span></p>
+<p><strong>Interpretation of Coefficients:</strong></p>
+<ul>
+<li><p><span class="math inline">\(\beta_0\)</span> (Intercept): This represents the predicted probability of an individual working in the medical industry if their travel time to Country B is zero hours and their parents’ combined income is zero dollars.</p></li>
+<li><p><span class="math inline">\(\beta_1\)</span> (travel_time): This is the ceteris paribus effect of travel time. It measures the predicted change in the probability of working in the medical field for each additional hour of travel time to Country B, holding parents’ income constant.</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span> (income_parents): This is the ceteris paribus effect of parental wealth. It measures the predicted change in the probability of working in the medical field for each additional $1,000 of combined parental income, holding travel time constant.</p></li>
+</ul>
+<p>Because our dependent variable (<span class="math inline">\(medicine\_dummy\)</span>) is a binary indicator (0 or 1), this represents a Linear Probability Model (LPM), meaning the coefficients explicitly measure changes in probability.</p>
+</section>
+<section id="iii-model-estimation-and-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="iii-model-estimation-and-comparison">2.1(iii) Model Estimation and Comparison</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the joint regression (from part ii)</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>model_joint <span class="ot">&lt;-</span> <span class="fu">lm</span>(medicine_dummy <span class="sc">~</span> travel_time <span class="sc">+</span> income_parents, <span class="at">data =</span> df_clean)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Estimate the simple regression (from part iii)</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>model_simple <span class="ot">&lt;-</span> <span class="fu">lm</span>(medicine_dummy <span class="sc">~</span> income_parents, <span class="at">data =</span> df_clean)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the summaries to view the coefficients</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_joint)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = medicine_dummy ~ travel_time + income_parents, data = df_clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.6448 -0.4311 -0.3667  0.5565  0.7006 
+
+Coefficients:
+                 Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)     0.4888083  0.0160359  30.482   &lt;2e-16 ***
+travel_time    -0.0415368  0.0045300  -9.169   &lt;2e-16 ***
+income_parents  0.0002823  0.0001297   2.176   0.0296 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.4925 on 13070 degrees of freedom
+  (316 observations deleted due to missingness)
+Multiple R-squared:  0.009776,  Adjusted R-squared:  0.009624 
+F-statistic: 64.51 on 2 and 13070 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(model_simple)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = medicine_dummy ~ income_parents, data = df_clean)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-0.5446 -0.4309 -0.3939  0.5638  0.6290 
+
+Coefficients:
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    0.3710501  0.0096335  38.517  &lt; 2e-16 ***
+income_parents 0.0007874  0.0001178   6.683 2.43e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.4941 on 13071 degrees of freedom
+  (316 observations deleted due to missingness)
+Multiple R-squared:  0.003406,  Adjusted R-squared:  0.003329 
+F-statistic: 44.67 on 1 and 13071 DF,  p-value: 2.43e-11</code></pre>
+</div>
+</div>
+<p>In the simple model, the point estimate for <code>income_parents</code> is 0.0007874. In the joint model, this coefficient drops substantially to 0.0002823.</p>
+<p><strong>Statistical Difference:</strong> Both estimates are statistically significant (p &lt; 0.05), but the magnitude drops by over 60% when adding <code>travel_time</code>, indicating a statistically meaningful shift in the distribution.</p>
+<p><strong>Economic Difference:</strong> The difference is highly economically significant. The simple model implies an effect nearly three times larger than the joint model, which drastically overstates the practical, real-world impact of parental wealth on medical career probability.</p>
+<p><strong>Explanation:</strong> This difference is caused by Omitted Variable Bias (OVB) in the simple model. If wealthier families tend to live closer to Country B (a negative correlation between income and travel time), and shorter travel times increase the likelihood of medical careers, omitting travel time creates a positive bias. The simple model improperly credits <code>income_parents</code> for the unobserved benefits of having a shorter commute.</p>
+</section>
+<section id="vi-comparison-region-and-travel_time" class="level3">
+<h3 class="anchored" data-anchor-id="vi-comparison-region-and-travel_time">2.1(vi) Comparison ‘region’ and ‘travel_time’</h3>
+<p>We don’t believe that using region instead of travel_time would be a better explanatory variable for the research question. The main mechanism of interest is how access to Country B, and especially to its medical industry, affects the probability of working in medicine. The variable travel_time measures this directly, as it captures directly how easily an individual can reach Country B. It therefore can be interpreted more clearly.</p>
+<p>In contrast, region is only a categorical identifier for the “region of town of birth”. Therefore it does not directly measure distance or access and is therefore less informative for this specific question. Different regions may contain towns that are geographically more dispersed resulting in very different travel times, so using region would likely be less precise.</p>
+<p>However, region could still be useful as an additional control variable, as it may capture other regional differences such as education opportunities or cultural factors. In conclusion, travel_time is the more appropriate variable for explaining the main research question, while region may only be helpful as a supplementary element.</p>
+</section>
+<section id="v-hypothesis-testing" class="level3">
+<h3 class="anchored" data-anchor-id="v-hypothesis-testing">2.1(v) Hypothesis testing</h3>
+<p>To test if income_parents is correlated with travel_time we have :</p>
+<p><span class="math display">\[
+income\_parents_i = \alpha_0 + \alpha_1 travel\_time_i + v_i
+\]</span> and test</p>
+<p><span class="math display">\[
+H_0:\alpha_1 = 0
+\qquad \text{against} \qquad
+H_A:\alpha_1 \neq 0.
+\]</span></p>
+<p>Under the null hypothesis, parental income is not linearly correlated with travel time. The test statistic is the t-statistic for the slope coefficient:</p>
+<p><span class="math display">\[
+t = \frac{\hat{\alpha}_1 - 0}{se(\hat{\alpha}_1)}
+\]</span></p>
+<p>If the p-value is below the chosen significance level, here for example we set it at 0.05, then we reject the null hypothesis and conclude that <code>income_parents</code> and <code>travel_time</code> are correlated.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Exercise 2(v)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Regression</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>corr_test <span class="ot">&lt;-</span> <span class="fu">lm</span>(income_parents <span class="sc">~</span> travel_time, <span class="at">data =</span> df_clean)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Full regression output</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(corr_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+lm(formula = income_parents ~ travel_time, data = df_clean)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-157.267  -22.409    2.748   23.076  118.514 
+
+Coefficients:
+            Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept) 101.9427     0.6116  166.68   &lt;2e-16 ***
+travel_time -14.8293     0.2765  -53.63   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 33.21 on 13071 degrees of freedom
+  (316 observations deleted due to missingness)
+Multiple R-squared:  0.1803,    Adjusted R-squared:  0.1803 
+F-statistic:  2876 on 1 and 13071 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coefficient table</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">summary</span>(corr_test))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Estimate Std. Error   t value Pr(&gt;|t|)
+(Intercept) 101.94269  0.6115956 166.68317        0
+travel_time -14.82935  0.2765342 -53.62573        0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 5% critical value for a two-sided t-test</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df_resid <span class="ot">&lt;-</span> <span class="fu">df.residual</span>(corr_test)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>t_crit <span class="ot">&lt;-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, df_resid)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>t_crit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.960145</code></pre>
+</div>
+</div>
+<p>From the regression, the estimated coefficient on <code>travel_time</code> is <strong>-14.8293</strong> with a standard error of <strong>0.2765</strong>, which gives a t-statistic of -53.63. The corresponding p-value is effectively <strong>0</strong>, which is below 5% significance level. Equivalently, the absolute value of the t-statistic (<span class="math inline">\(|-53.63| = 53.63\)</span>) is much larger than the critical value of <strong>1.96</strong> for a two-sided test at the 5% level.</p>
+<p>Therefore, we reject the null hypothesis <span class="math inline">\(H_0: \alpha_1 = 0\)</span> in favor of the alternative hypothesis <span class="math inline">\(H_A: \alpha_1 \neq 0\)</span>.</p>
+<p>In conclusion, <code>income_parents</code> and <code>travel_time</code> are statistically significantly correlated. The estimated relationship is negative, meaning that individuals with higher parental income tend to live closer to Country B (i.e.&nbsp;have lower travel time). This is important because it supports the omitted variable bias concern discussed in part (iii).</p>
+</section>
+<section id="vi-hypothesis-testing-travel_time-and-income_parents" class="level3">
+<h3 class="anchored" data-anchor-id="vi-hypothesis-testing-travel_time-and-income_parents">2.1(vi) Hypothesis testing : travel_time and income_parents</h3>
+<p>To test whether <code>travel_time</code> and <code>income_parents</code> are jointly significant in the regression from part (ii), we apply an F-test.</p>
+<p>The null and alternative hypotheses are:</p>
+<p><span class="math display">\[
+H_0:\beta_1 = 0 \text{ and } \beta_2 = 0
+\]</span></p>
+<p><span class="math display">\[
+H_A:\text{at least one of } \beta_1,\beta_2 \neq 0
+\]</span></p>
+<p>Under the null hypothesis, neither variable helps explain whether an individual works in medicine. Unrestricted model:</p>
+<p><span class="math display">\[
+medicine_i = \beta_0 + \beta_1 travel\_time_i + \beta_2 income\_parents_i + u_i
+\]</span></p>
+<p>Restricted model:</p>
+<p><span class="math display">\[
+medicine_i = \beta_0 + u_i
+\]</span></p>
+<p>The test is based on the F-statistic, which compares whether the unrestricted model fits the data better than restricted model:</p>
+<p><span class="math display">\[
+F = \frac{(SSR_r - SSR_{ur})/q}{SSR_{ur}/(n-k-1)}
+\]</span></p>
+<p>where <span class="math inline">\(q=2\)</span> is the number of restrictions.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df_reg <span class="ot">&lt;-</span> <span class="fu">subset</span>(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  df_clean,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span><span class="fu">is.na</span>(medicine_dummy) <span class="sc">&amp;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span><span class="fu">is.na</span>(travel_time) <span class="sc">&amp;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="sc">!</span><span class="fu">is.na</span>(income_parents)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Unrestricted model</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>reg_unrestricted <span class="ot">&lt;-</span> <span class="fu">lm</span>(medicine_dummy <span class="sc">~</span> travel_time <span class="sc">+</span> income_parents, <span class="at">data =</span> df_reg)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Restricted model</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>reg_restricted <span class="ot">&lt;-</span> <span class="fu">lm</span>(medicine_dummy <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> df_reg)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Joint significance F-test</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="fu">anova</span>(reg_restricted, reg_unrestricted)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Analysis of Variance Table
+
+Model 1: medicine_dummy ~ 1
+Model 2: medicine_dummy ~ travel_time + income_parents
+  Res.Df    RSS Df Sum of Sq      F    Pr(&gt;F)    
+1  13072 3201.6                                  
+2  13070 3170.3  2    31.297 64.514 &lt; 2.2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
+</div>
+</div>
+<p>From the ANOVA output, the F-statistic is 64.514 with a p-value smaller than 0.001. Therefore, null hypothesis is rejected at 5% significance level. Therefore travel_time and income_parents are jointly significant in explaining whether an individual works in the medical industry.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
