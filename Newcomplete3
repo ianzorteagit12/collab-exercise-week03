@@ -1,0 +1,242 @@
+---
+title: "Assignment 3"
+format: html
+editor: visual
+---
+
+## Exercise 1
+
+We start from the estimated regression:
+
+$$
+Y_{i,1} = \hat{\beta}_0 + \hat{\beta}_1 X_i + \hat{u}_i
+$$
+
+and the transformed regressor:
+
+$$
+Q_i = X_i - 10
+$$
+
+If we solve for $X_i$, we obtain:
+
+$$
+X_i = Q_i + 10
+$$
+
+We then substitute this into the estimated regression which gives:
+
+$$
+Y_{i,1} = \hat{\beta}_0 + \hat{\beta}_1(Q_i + 10) + \hat{u}_i
+$$
+
+Expanding and rearranging:
+
+$$
+Y_{i,1} = \hat{\beta}_0 + \hat{\beta}_1 Q_i + 10\hat{\beta}_1 + \hat{u}_i
+$$
+
+$$
+Y_{i,1} = (\hat{\beta}_0 + 10\hat{\beta}_1) + \hat{\beta}_1 Q_i + \hat{u}_i
+$$
+
+Now compare this with the transformed estimated regression:
+
+$$
+Y_{i,1} = \hat{\delta}_0 + \hat{\delta}_1 Q_i + \hat{u}_i
+$$
+
+By matching coefficients, we obtain:
+
+$$
+\hat{\delta}_1 = \hat{\beta}_1
+$$
+
+and
+
+$$
+\hat{\delta}_0 = \hat{\beta}_0 + 10\hat{\beta}_1
+$$
+
+### Conclusion
+
+When a constant is subtracted from a regressor, the slope estimator remains completely unaffected because the rate of change is identical. However, the intercept estimator shifts by the constant multiplied by the slope to absorb the shifted baseline.
+
+------------------------------------------------------------------------
+
+## Exercise 2
+
+### 2.1(i) Data Import and Cleaning
+
+```{r}
+#| message: false
+#| warning: false
+
+# 1. Load the required packages
+library(dplyr)
+library(readr)
+library(skimr)
+
+# 3. Import the dataset 
+df <- read_csv("distances_birthtown_up.csv")
+
+# 2. Inspect the data
+skim(df)
+
+# 4. Clean the data and generate the new variable
+df_clean <- df %>%
+  mutate(
+    income_parent1 = ifelse(income_parent1 == -9999999, NA, income_parent1),
+    income_parent2 = ifelse(income_parent2 == -9999999, NA, income_parent2),
+    medicine_dummy = ifelse(medicine == "Yes", 1, 0),
+    income_parents = income_parent1 + income_parent2
+  )
+
+# 5. Explore the cleaned data
+summary(df_clean)
+sum(is.na(df_clean))
+```
+
+### 2.1(ii) Regression Equation and Interpretation
+
+The multiple linear regression equation to jointly investigate these relationships is:
+
+$$medicine\_dummy_i = \beta_0 + \beta_1 travel\_time_i + \beta_2 income\_parents_i + u_i$$
+
+**Interpretation of Coefficients:**
+
+-   $\beta_0$ (Intercept): This represents the predicted probability of an individual working in the medical industry if their travel time to Country B is zero hours and their parents' combined income is zero dollars.
+
+-   $\beta_1$ (travel_time): This is the ceteris paribus effect of travel time. It measures the predicted change in the probability of working in the medical field for each additional hour of travel time to Country B, holding parents' income constant.
+
+-   $\beta_2$ (income_parents): This is the ceteris paribus effect of parental wealth. It measures the predicted change in the probability of working in the medical field for each additional \$1,000 of combined parental income, holding travel time constant.
+
+Because our dependent variable ($medicine\_dummy$) is a binary indicator (0 or 1), this represents a Linear Probability Model (LPM), meaning the coefficients explicitly measure changes in probability.
+
+### 2.1(iii) Model Estimation and Comparison
+
+```{r}
+# Estimate the joint regression (from part ii)
+model_joint <- lm(medicine_dummy ~ travel_time + income_parents, data = df_clean)
+
+# Estimate the simple regression (from part iii)
+model_simple <- lm(medicine_dummy ~ income_parents, data = df_clean)
+
+# Print the summaries to view the coefficients
+summary(model_joint)
+summary(model_simple)
+```
+
+In the simple model, the point estimate for `income_parents` is 0.0007874. In the joint model, this coefficient drops substantially to 0.0002823.
+
+**Statistical Difference:** Both estimates are statistically significant (p \< 0.05), but the magnitude drops by over 60% when adding `travel_time`, indicating a statistically meaningful shift in the distribution.
+
+**Economic Difference:** The difference is highly economically significant. The simple model implies an effect nearly three times larger than the joint model, which drastically overstates the practical, real-world impact of parental wealth on medical career probability.
+
+**Explanation:** This difference is caused by Omitted Variable Bias (OVB) in the simple model. If wealthier families tend to live closer to Country B (a negative correlation between income and travel time), and shorter travel times increase the likelihood of medical careers, omitting travel time creates a positive bias. The simple model improperly credits `income_parents` for the unobserved benefits of having a shorter commute.
+
+### 2.1(vi) Comparison 'region' and 'travel_time'
+
+We don't believe that using region instead of travel_time would be a better explanatory variable for the research question. The main mechanism of interest is how access to Country B, and especially to its medical industry, affects the probability of working in medicine. The  variable travel_time measures this directly, as it captures directly how easily an individual can reach Country B. It therefore can be interpreted more clearly.
+
+In contrast, region is only a categorical identifier for the "region of town of birth". Therefore it does not directly measure distance or access and is therefore less informative for this specific question. Different regions may contain towns that are geographically more dispersed resulting in very different travel times, so using region would likely be less precise.
+
+However, region could still be useful as an additional control variable, as it may capture other regional differences such as education opportunities or cultural factors. In conclusion, travel_time is the more appropriate variable for explaining the main research question, while region may only be helpful as a supplementary element. 
+
+### 2.1(v) Hypothesis testing
+
+To test if income_parents is correlated with travel_time we have : 
+
+$$
+income\_parents_i = \alpha_0 + \alpha_1 travel\_time_i + v_i
+$$
+and test
+
+$$
+H_0:\alpha_1 = 0
+\qquad \text{against} \qquad
+H_A:\alpha_1 \neq 0.
+$$
+
+Under the null hypothesis, parental income is not linearly correlated with travel time. The test statistic is the t-statistic for the slope coefficient:
+
+$$
+t = \frac{\hat{\alpha}_1 - 0}{se(\hat{\alpha}_1)}
+$$
+
+If the p-value is below the chosen significance level, here for example we set it at 0.05, then we reject the null hypothesis and conclude that `income_parents` and `travel_time` are correlated.
+
+```{r}
+# Exercise 2(v)
+
+# Regression
+corr_test <- lm(income_parents ~ travel_time, data = df_clean)
+
+# Full regression output
+summary(corr_test)
+
+# Coefficient table
+coef(summary(corr_test))
+
+# 5% critical value for a two-sided t-test
+df_resid <- df.residual(corr_test)
+t_crit <- qt(0.975, df_resid)
+t_crit
+```
+From the regression, the estimated coefficient on `travel_time` is **-14.8293** with a standard error of **0.2765**, which gives a t-statistic of -53.63. The corresponding p-value is effectively **0**, which is below 5% significance level. Equivalently, the absolute value of the t-statistic ($|-53.63| = 53.63$) is much larger than the critical value of **1.96** for a two-sided test at the 5% level.
+
+Therefore, we reject the null hypothesis $H_0: \alpha_1 = 0$ in favor of the alternative hypothesis $H_A: \alpha_1 \neq 0$.
+
+In conclusion, `income_parents` and `travel_time` are statistically significantly correlated. The estimated relationship is negative, meaning that individuals with higher parental income tend to live closer to Country B (i.e. have lower travel time). This is important because it supports the omitted variable bias concern discussed in part (iii).
+
+### 2.1(vi) Hypothesis testing : travel_time and income_parents 
+
+To test whether `travel_time` and `income_parents` are jointly significant in the regression from part (ii), we apply an F-test.
+
+The null and alternative hypotheses are:
+
+$$
+H_0:\beta_1 = 0 \text{ and } \beta_2 = 0
+$$
+
+$$
+H_A:\text{at least one of } \beta_1,\beta_2 \neq 0
+$$
+
+Under the null hypothesis, neither variable helps explain whether an individual works in medicine. Unrestricted model:
+
+$$
+medicine_i = \beta_0 + \beta_1 travel\_time_i + \beta_2 income\_parents_i + u_i
+$$
+
+Restricted model:
+
+$$
+medicine_i = \beta_0 + u_i
+$$
+
+The test is based on the F-statistic, which compares whether the unrestricted model fits the data better than restricted model:
+
+$$
+F = \frac{(SSR_r - SSR_{ur})/q}{SSR_{ur}/(n-k-1)}
+$$
+
+where $q=2$ is the number of restrictions.
+
+```{r}
+df_reg <- subset(
+  df_clean,
+  !is.na(medicine_dummy) &
+  !is.na(travel_time) &
+  !is.na(income_parents)
+)
+# Unrestricted model
+reg_unrestricted <- lm(medicine_dummy ~ travel_time + income_parents, data = df_reg)
+
+# Restricted model
+reg_restricted <- lm(medicine_dummy ~ 1, data = df_reg)
+
+# Joint significance F-test
+anova(reg_restricted, reg_unrestricted)
+```
+From the ANOVA output, the F-statistic is 64.514 with a p-value smaller than 0.001. Therefore, null hypothesis is rejected at 5% significance level. Therefore travel_time and income_parents are jointly significant in explaining whether an individual works in the medical industry.
