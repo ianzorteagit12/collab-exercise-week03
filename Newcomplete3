@@ -87,11 +87,15 @@ skim(df)
 # 4. Clean the data and generate the new variable
 df_clean <- df %>%
   mutate(
+    # Your superior, consistent income logic
     income_parent1 = ifelse(income_parent1 == -9999999, NA, income_parent1),
     income_parent2 = ifelse(income_parent2 == -9999999, NA, income_parent2),
+    travel_time = ifelse(travel_time < 0, NA, travel_time),
+    region = region + 1,
     medicine_dummy = ifelse(medicine == "Yes", 1, 0),
     income_parents = income_parent1 + income_parent2
-  )
+  ) %>%
+  na.omit()
 
 # 5. Explore the cleaned data
 summary(df_clean)
@@ -136,22 +140,21 @@ In the simple model, the point estimate for `income_parents` is 0.0007874. In th
 
 **Explanation:** This difference is caused by Omitted Variable Bias (OVB) in the simple model. If wealthier families tend to live closer to Country B (a negative correlation between income and travel time), and shorter travel times increase the likelihood of medical careers, omitting travel time creates a positive bias. The simple model improperly credits `income_parents` for the unobserved benefits of having a shorter commute.
 
-### 2.1(vi) Comparison 'region' and 'travel_time'
+### 2.1(iv) Comparison 'region' and 'travel_time'
 
-We don't believe that using region instead of travel_time would be a better explanatory variable for the research question. The main mechanism of interest is how access to Country B, and especially to its medical industry, affects the probability of working in medicine. The  variable travel_time measures this directly, as it captures directly how easily an individual can reach Country B. It therefore can be interpreted more clearly.
+We don't believe that using region instead of travel_time would be a better explanatory variable for the research question. The main mechanism of interest is how access to Country B, and especially to its medical industry, affects the probability of working in medicine. The variable travel_time measures this directly, as it captures directly how easily an individual can reach Country B. It therefore can be interpreted more clearly.
 
 In contrast, region is only a categorical identifier for the "region of town of birth". Therefore it does not directly measure distance or access and is therefore less informative for this specific question. Different regions may contain towns that are geographically more dispersed resulting in very different travel times, so using region would likely be less precise.
 
-However, region could still be useful as an additional control variable, as it may capture other regional differences such as education opportunities or cultural factors. In conclusion, travel_time is the more appropriate variable for explaining the main research question, while region may only be helpful as a supplementary element. 
+However, region could still be useful as an additional control variable, as it may capture other regional differences such as education opportunities or cultural factors. In conclusion, travel_time is the more appropriate variable for explaining the main research question, while region may only be helpful as a supplementary element.
 
 ### 2.1(v) Hypothesis testing
 
-To test if income_parents is correlated with travel_time we have : 
+To test if income_parents is correlated with travel_time we have :
 
 $$
 income\_parents_i = \alpha_0 + \alpha_1 travel\_time_i + v_i
-$$
-and test
+$$ and test
 
 $$
 H_0:\alpha_1 = 0
@@ -184,13 +187,14 @@ df_resid <- df.residual(corr_test)
 t_crit <- qt(0.975, df_resid)
 t_crit
 ```
+
 From the regression, the estimated coefficient on `travel_time` is **-14.8293** with a standard error of **0.2765**, which gives a t-statistic of -53.63. The corresponding p-value is effectively **0**, which is below 5% significance level. Equivalently, the absolute value of the t-statistic ($|-53.63| = 53.63$) is much larger than the critical value of **1.96** for a two-sided test at the 5% level.
 
 Therefore, we reject the null hypothesis $H_0: \alpha_1 = 0$ in favor of the alternative hypothesis $H_A: \alpha_1 \neq 0$.
 
 In conclusion, `income_parents` and `travel_time` are statistically significantly correlated. The estimated relationship is negative, meaning that individuals with higher parental income tend to live closer to Country B (i.e. have lower travel time). This is important because it supports the omitted variable bias concern discussed in part (iii).
 
-### 2.1(vi) Hypothesis testing : travel_time and income_parents 
+### 2.1(vi) Hypothesis testing : travel_time and income_parents
 
 To test whether `travel_time` and `income_parents` are jointly significant in the regression from part (ii), we apply an F-test.
 
@@ -240,4 +244,5 @@ reg_restricted <- lm(medicine_dummy ~ 1, data = df_reg)
 # Joint significance F-test
 anova(reg_restricted, reg_unrestricted)
 ```
+
 From the ANOVA output, the F-statistic is 64.514 with a p-value smaller than 0.001. Therefore, null hypothesis is rejected at 5% significance level. Therefore travel_time and income_parents are jointly significant in explaining whether an individual works in the medical industry.
