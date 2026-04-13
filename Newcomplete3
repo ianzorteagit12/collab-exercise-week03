@@ -89,7 +89,7 @@ df_clean <- df %>%
   mutate(
     # Your superior, consistent income logic
     income_parent1 = ifelse(income_parent1 == -9999999, NA, income_parent1),
-    income_parent2 = ifelse(income_parent2 == -9999999, NA, income_parent2),
+    income_parent2 = ifelse(income_parent2 == -9999999, NA, income_parent2), #We remove observations with invalid income values (-9999999)
     travel_time = ifelse(travel_time < 0, NA, travel_time),
     region = region + 1,
     medicine_dummy = ifelse(medicine == "Yes", 1, 0),
