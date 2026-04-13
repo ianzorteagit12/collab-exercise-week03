@@ -87,7 +87,6 @@ skim(df)
 # 4. Clean the data and generate the new variable
 df_clean <- df %>%
   mutate(
-    # Your superior, consistent income logic
     income_parent1 = ifelse(income_parent1 == -9999999, NA, income_parent1),
     income_parent2 = ifelse(income_parent2 == -9999999, NA, income_parent2),
     travel_time = abs(travel_time),
@@ -133,13 +132,13 @@ summary(model_joint)
 summary(model_simple)
 ```
 
-In the simple model, the point estimate for `income_parents` is 0.0007874. In the joint model, this coefficient drops substantially to 0.0002823.
+In the simple model, the point estimate for `income_parents` is 0.0008031. In the joint model, this coefficient drops substantially to 0.0001938.
 
-**Statistical Difference:** Both estimates are statistically significant (p \< 0.05), but the magnitude drops by over 60% when adding `travel_time`, indicating a statistically meaningful shift in the distribution.
+**Statistical Difference:** The estimates are fundamentally different. In the simple model, `income_parents` is highly statistically significant (p \< 0.001). However, once `travel_time` is added to the joint model, the p-value for income_parents jumps to 0.144, meaning it completely loses its statistical significance at the 5% level.
 
-**Economic Difference:** The difference is highly economically significant. The simple model implies an effect nearly three times larger than the joint model, which drastically overstates the practical, real-world impact of parental wealth on medical career probability.
+**Economic Difference:** The difference is highly economically significant. The coefficient magnitude decreases by roughly 76% when adding travel time. The simple model implies an effect over four times larger than the joint model, which drastically overstates the practical, real-world impact of parental wealth on medical career probability.
 
-**Explanation:** This difference is caused by Omitted Variable Bias (OVB) in the simple model. If wealthier families tend to live closer to Country B (a negative correlation between income and travel time), and shorter travel times increase the likelihood of medical careers, omitting travel time creates a positive bias. The simple model improperly credits `income_parents` for the unobserved benefits of having a shorter commute.
+**Explanation:** This difference is caused by Omitted Variable Bias (OVB) in the simple model. If wealthier families tend to live closer to Country B (a negative correlation between income and travel time), and shorter travel times increase the likelihood of medical careers, omitting travel time creates a positive bias. The simple model improperly credits `income_parents` for the unobserved benefits of having a shorter commute, making it look statistically significant when it actually is not.
 
 ### 2.1(iv) Comparison 'region' and 'travel_time'
 
@@ -189,7 +188,7 @@ t_crit <- qt(0.975, df_resid)
 t_crit
 ```
 
-From the regression, the estimated coefficient on `travel_time` is **-14.8293** with a standard error of **0.2765**, which gives a t-statistic of -53.63. The corresponding p-value is effectively **0**, which is below 5% significance level. Equivalently, the absolute value of the t-statistic ($|-53.63| = 53.63$) is much larger than the critical value of **1.96** for a two-sided test at the 5% level.
+From the regression, the estimated coefficient on `travel_time` is **-17.1236** with a standard error of **0.2922**, which gives a t-statistic of **-58.6**. The corresponding p-value is effectively **0**, which is below 5% significance level. Equivalently, the absolute value of the t-statistic ($|-58.6| = 58.6$) is much larger than the critical value of **1.96** for a two-sided test at the 5% level.
 
 Therefore, we reject the null hypothesis $H_0: \alpha_1 = 0$ in favor of the alternative hypothesis $H_A: \alpha_1 \neq 0$.
 
@@ -246,4 +245,4 @@ reg_restricted <- lm(medicine_dummy ~ 1, data = df_reg)
 anova(reg_restricted, reg_unrestricted)
 ```
 
-From the ANOVA output, the F-statistic is 64.514 with a p-value smaller than 0.001. Therefore, null hypothesis is rejected at 5% significance level. Therefore travel_time and income_parents are jointly significant in explaining whether an individual works in the medical industry.
+From the ANOVA output, the F-statistic is 73.44 with a p-value smaller than 0.001. Therefore, null hypothesis is rejected at 5% significance level. Therefore `travel_time` and `income_parents` are jointly significant in explaining whether an individual works in the medical industry.
