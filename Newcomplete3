@@ -78,10 +78,10 @@ library(dplyr)
 library(readr)
 library(skimr)
 
-# 3. Import the dataset 
+# 2. Import the dataset 
 df <- read_csv("distances_birthtown_up.csv")
 
-# 2. Inspect the data
+# 3. Inspect the data
 skim(df)
 
 # 4. Clean the data and generate the new variable
