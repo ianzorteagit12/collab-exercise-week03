@@ -1,0 +1,84 @@
+---
+title: "Assignment 4"
+output: html_document
+date: "2026-04-26"
+---
+
+# Exercise 1(a) Coefficient Interpretation
+
+-   $\hat{\beta}_1$ (fsize) = -0.0412: The Ceteris paribus effect, an increase in household size by one person is associated with a 4.12% (exact is 4.04% so we can just use the approximation)decrease in household income. This is because the dependent variable is in logs and $fsize$ is in levels, so we have a log-level, therefore the correct interpretation uses $\hat{\beta}_1 \times 100$.
+
+-   $\hat{\beta}_2$ ($\log(tw)$) = 0.2873: With Ceteris paribus, a 1% increase in household wealth is associated with a 0.2873% increase in household income. Since both the dependent variable and the regressor are in logs log-log, the coefficient is interpreted directly as an elasticity (using $\hat{\beta}_2$)
+
+-   $\hat{\beta}_6$ (marr) = 0.4217: Ceteris paribus, households where the main earner is married have approximately 52.48% higher annual household income than those where the main earner is not married. This is calculated using the exact formula $(e^{0.4217} - 1)\times 100 \approx 52.48\%$, as the approximate interpretation using $\hat{\beta}_6 \times 100 = 42.17\%$ is less accurate due to the relatively large coefficient(i.e 0.4217).
+
+# Exercise 1(b) Coefficient Interpretation
+The model is
+
+\[
+\log(inc_i) = \hat{\beta}_0 + \hat{\beta}_1 fsize_i + \hat{\beta}_2 \log(tw_i) + \hat{\beta}_3 age_i + \hat{\beta}_4 age_i^2 + \hat{\beta}_5 educ_i + \hat{\beta}_6 marr_i + u_i.
+\]
+
+The marginal effect of age on $\log(inc)$ is
+
+\[
+\frac{\partial \log(inc)}{\partial age}
+= \hat{\beta}_3 + 2\hat{\beta}_4 \cdot age.
+\]
+
+Evaluating at $age = 25$:
+
+\[
+0.0512 + 2(-0.0006)\cdot 25 = 0.0212.
+\]
+
+Ceteris paribus, at age 25, one additional year of age is associated with approximately a 2.12% increase in annual household income.
+
+For the turning point, we have to set the marginal effect of age = 0:
+\[
+\hat{\beta}_3 + 2\hat{\beta}_4 \cdot age^* = 0
+\]
+
+We rearrange for age and evaluate at the values:
+\[
+age^* = -\frac{\hat{\beta}_3}{2\hat{\beta}_4}
+\]
+
+
+\[
+age^* = -\frac{0.0512}{2(-0.0006)} = 42.67
+\]
+
+Therefore, up until age 42.67 then the income will increase, after this point then it will start to decrease.
+
+
+# Exercise 2 Model Specification
+
+
+For $\breve{\beta}_1$ (fsize):
+
+1. $\beta_{tw}$ is likely positive because households with two employed persons should have higher income, therefore  $\beta_{tw} > 0$.
+2. $\delta_1$ is likely positive because larger households are more likely to have(i.e are positivly correlated) two earners, therefore $\mathrm{Cov}(fsize, twoearn) > 0$ and thus $\delta_1 > 0$.
+3. Therefore, the bias should be positive as $\beta_{tw} > 0$ and $\delta_1 > 0$,so $\breve{\beta}_1$ is biased upward relative to the true coefficient ($\beta_1$).
+
+For $\breve{\beta}_6$ (marr):
+
+1. $\beta_{tw}$ is likely positive because households with two employed persons should have higher income, therefore  $\beta_{tw} > 0$.
+2. $\delta_6$ is likely positive, as being married is positively corroleted with having 2 earners, as both can work, so $\mathrm{Cov}(marr, twoearn) > 0$ and thus $\delta_6 > 0$.
+3. Since $\beta_{tw} > 0$ and $\delta_6 > 0$, the bias $\beta_{tw} \cdot \delta_6$ is positive, therefore $\tilde{\beta}_6$ is biased upward relative to the true $\beta_6$.
+
+# Exercise 3(a) Residual Patterns and Inference
+The Gauss–Markov assumption of homoskedasticity (MLR.5) is called into question, since the variance of the error term appears to increase with education, therefore constant variance doesn't exist here.
+\[
+\operatorname{Var}(u_i \mid X_i) = \sigma^2
+\]
+
+# Exercise 3(b)
+OLS is still unbiased as long as the zero conditional mean assumption holds, which is true as all MLR. 1-4 hold. However, it is no longer BLUE because heteroskedasticity violates the homoskedasticity assumption, so OLS is not efficient meaning that the weighted least squares would be more efficient here.
+
+# Exercise 3(c)
+If we use homoskedasticity-based formula  under heteroskedasticity then the standard erros will be wrong and can also be biased. The Hypothesis tests become unreliable as the test statistic wont follow the assumed t-distribution.
+
+
+
+
