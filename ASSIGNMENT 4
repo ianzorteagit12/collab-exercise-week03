@@ -80,5 +80,73 @@ OLS is still unbiased as long as the zero conditional mean assumption holds, whi
 If we use homoskedasticity-based formula  under heteroskedasticity then the standard erros will be wrong and can also be biased. The Hypothesis tests become unreliable as the test statistic wont follow the assumed t-distribution.
 
 
+## Exercise 4 Inference for household size
 
+**1. The hypotheses**
+
+We are testing whether household size has a strictly negative effect on income. $$H_0: \beta_1 \ge 0$$ $$H_1: \beta_1 < 0$$
+
+**2. The test statistic**
+
+The formula for a standard t-test (testing against a null value of $0$) is: $$t = \frac{\hat{\beta}_1 - 0}{se(\hat{\beta}_1)}$$
+
+**3. The observed t-value**
+
+Plugging in the estimated coefficient and standard error for $fsize$ from the regression table: $$t = \frac{-0.0412 - 0}{0.0201} = -2.0498$$
+
+**4. The reference distribution under**
+
+$H_0$ Under the null hypothesis, the test statistic follows a $t$-distribution with $N - k - 1$ degrees of freedom. With $N = 534$ households and $k = 6$ regressors: $$df = 534 - 6 - 1 = 527$$
+
+The reference distribution is exactly $t_{527}$ (which is asymptotically equivalent to the standard normal $N(0,1)$ distribution due to the large sample size).
+
+**5. The critical value**
+
+For a one-sided, left-tailed test at a significance level of $\alpha = 0.01$, the critical value from the $t_{527}$ distribution is: $$t^* \approx -2.333$$ *(Note: Using the standard normal approximation yields a critical value of* $-2.326$.)
+
+**6. The p-value**
+
+The p-value is the probability of observing a t-statistic of $-2.0498$ or more negative. $$p\text{-value} = P(T \le -2.0498) \approx 0.0205$$
+
+**7. The test decision**
+
+Because the observed t-value ($-2.0498$) is strictly greater than the critical value ($-2.333$), it does not fall into the rejection region. Equivalently, the p-value ($0.0205$) is greater than the significance level $\alpha$ ($0.01$). Therefore, we **fail to reject the null hypothesis**. There is not enough statistical evidence at the 1% level to conclude that household size negatively affects income.
+
+## Exercise 5 Testing age effects
+
+**1. Why separate t-tests are incorrect**
+
+Separate t-tests ignore the covariance between the estimated coefficients of age and age squared, which are highly correlated. Even if both individual t-tests fail to reject the null due to multicollinearity inflating their standard errors, their combined effect can still be highly jointly significant in explaining household income.
+
+**2. The correct test**
+
+The correct test for the joint null hypothesis ($H_0: \beta_3 = 0$ and $\beta_4 = 0$) is the **F-test for joint significance** (also known as the F-test for multiple linear restrictions).
+
+**3. The test-statistic**
+
+The F-statistic, expressed in terms of the Sum of Squared Residuals (SSR), is:
+
+$$F = \frac{(SSR_r - SSR_{ur}) / q}{SSR_{ur} / (N - k - 1)}$$
+
+------------------------------------------------------------------------
+
+# Part II
+
+## Exercise 6 Error Variance and OLS Precision
+
+**6(a) Formula differences and the** $\Omega$ **matrix**
+
+The homoscedastic formula assumes the error variance is perfectly constant across all observations, allowing it to be factored out as a single scalar ($\sigma^2$). In contrast, the heteroscedastic formula (the "sandwich" estimator) allows the error variance to change for every single observation. In this robust formula, the matrix $\Omega$ represents the true variance-covariance matrix of the error terms, containing the individual, non-constant variances for each specific observation along its main diagonal.
+
+**6(b) Misleading homoscedastic standard errors**
+
+As established in Question 3, this specific data exhibits heteroscedasticity because the residual variance physically widens as education increases, directly violating the assumption of a single, constant variance. If we wrongly apply the homoscedastic formula, it forces a single "average" variance onto the entire dataset, which incorrectly estimates the true standard errors. Consequently, these misleading standard errors will produce invalid t-statistics, making any hypothesis tests about the coefficients completely unreliable.
+
+**6(c) Simplification under homoscedasticity**
+
+Under the assumption of homoscedasticity, the matrix $\Omega$ simplifies to a scalar multiplied by the identity matrix ($I$). Mathematically: $$\Omega = \sigma^2 I$$
+
+**6(d) Unbiasedness vs. Valid Standard Errors**
+
+No, this statement is incorrect. Unbiasedness relies only on the first four Gauss-Markov assumptions (meaning the coefficients are centered correctly), but valid standard errors strictly require the fifth assumption (homoscedasticity) to hold true. Therefore, heteroscedasticity will completely invalidate your standard errors even if your OLS coefficients remain perfectly unbiased.
 
