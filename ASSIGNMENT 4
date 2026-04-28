@@ -10,7 +10,7 @@ output:
 
 ## Exercise 1 Coefficient Interpretation
 
-### Exercise 1(a)
+**Exercise 1(a)**
 
 -   $\hat{\beta}_1$ (fsize) = -0.0412: The Ceteris paribus effect, an increase in household size by one person is associated with a 4.12% (exact is 4.04% so we can just use the approximation)decrease in household income. This is because the dependent variable is in logs and $fsize$ is in levels, so we have a log-level, therefore the correct interpretation uses $\hat{\beta}_1 \times 100$.
 
@@ -18,7 +18,7 @@ output:
 
 -   $\hat{\beta}_6$ (marr) = 0.4217: Ceteris paribus, households where the main earner is married have approximately 52.48% higher annual household income than those where the main earner is not married. This is calculated using the exact formula $(e^{0.4217} - 1)\times 100 \approx 52.48\%$, as the approximate interpretation using $\hat{\beta}_6 \times 100 = 42.17\%$ is less accurate due to the relatively large coefficient(i.e 0.4217).
 
-### Exercise 1(b)
+**Exercise 1(b)**
 The model is
 
 $$
@@ -70,17 +70,17 @@ For $\breve{\beta}_6$ (marr):
 
 ## Exercise 3 Residual Patterns and Inference
 
-### Exercise 3(a)
+**Exercise 3(a)**
 
 The Gauss–Markov assumption of homoskedasticity (MLR.5) is called into question, since the variance of the error term appears to increase with education, therefore constant variance doesn't exist here. $$
 \operatorname{Var}(u_i \mid X_i) = \sigma^2
 $$
 
-### Exercise 3(b)
+**Exercise 3(b)**
 
 OLS is still unbiased as long as the zero conditional mean assumption holds, which is true as all MLR. 1-4 hold. However, it is no longer BLUE because heteroskedasticity violates the homoskedasticity assumption, so OLS is not efficient meaning that the weighted least squares would be more efficient here.
 
-### Exercise 3(c)
+**Exercise 3(c)**
 
 If we use homoskedasticity-based formula under heteroskedasticity then the standard erros will be wrong and can also be biased. The Hypothesis tests become unreliable as the test statistic wont follow the assumed t-distribution.
 
@@ -157,4 +157,5 @@ Under the assumption of homoscedasticity, the matrix $\Omega$ simplifies to a sc
 **6(d) Unbiasedness vs. Valid Standard Errors**
 
 No, this statement is incorrect. Unbiasedness relies only on the first four Gauss-Markov assumptions (meaning the coefficients are centered correctly), but valid standard errors strictly require the fifth assumption (homoscedasticity) to hold true. Therefore, heteroscedasticity will completely invalidate your standard errors even if your OLS coefficients remain perfectly unbiased.
+
 
