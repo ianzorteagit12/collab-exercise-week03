@@ -66,15 +66,17 @@ For $\breve{\beta}_6$ (marr):
 
 1.  $\beta_{tw}$ is likely positive because households with two employed persons should have higher income, therefore $\beta_{tw} > 0$.
 2.  $\delta_6$ is likely positive, as being married is positively corroleted with having 2 earners, as both can work, so $\mathrm{Cov}(marr, twoearn) > 0$ and thus $\delta_6 > 0$.
-3.  Since $\beta_{tw} > 0$ and $\delta_6 > 0$, the bias $\beta_{tw} \cdot \delta_6$ is positive, therefore $\tilde{\beta}_6$ is biased upward relative to the true $\beta_6$.
+3.  Since $\beta_{tw} > 0$ and $\delta_6 > 0$, the bias $\beta_{tw} \cdot \delta_6$ is positive, therefore $\breve{\beta}_6$ is biased upward relative to the true $\beta_6$.
 
 ## Exercise 3 Residual Patterns and Inference
 
 **Exercise 3(a)**
 
-The Gauss–Markov assumption of homoskedasticity (MLR.5) is called into question, since the variance of the error term appears to increase with education, therefore constant variance doesn't exist here. $$
-\operatorname{Var}(u_i \mid X_i) = \sigma^2
+The Gauss-Markov assumption of homoskedasticity (MLR.5) is called into question, since the variance of the error term appears to increase with education. Formally, this implies that
 $$
+\operatorname{Var}(u_i \mid educ_i) \neq \sigma^2,
+$$
+so the error variance isn't constant across levels of education.
 
 **Exercise 3(b)**
 
