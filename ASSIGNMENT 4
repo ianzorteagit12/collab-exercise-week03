@@ -59,7 +59,7 @@ For $\breve{\beta}_6$ (marr):
 
 **Exercise 3(a)**
 
-The Gauss-Markov assumption of homoskedasticity (MLR.5) is called into question, since the variance of the error term appears to increase with education. Formally, this implies that $$\operatorname{Var}(u_i \mid educ_i) \neq \sigma^2,$$ so the error variance isn't constant across levels of education.
+The Gauss-Markov assumption of homoskedasticity (MLR.5) is called into question, since the variance of the error term appears to increase with education, therefore, this implies that $$\operatorname{Var}(u_i \mid educ_i) \neq \sigma^2,$$ so the error variance isn't constant across levels of education.
 
 **Exercise 3(b)**
 
