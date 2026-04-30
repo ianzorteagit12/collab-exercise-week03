@@ -4,53 +4,40 @@ author: "Ian Zortea, Jose Penarrieta"
 date: "27 April 2026"
 output:
   html_document:
-  theme: cosmo
-  highlight: dracula
+    theme: cosmo
+    highlight: tango
 ---
 
 ## Exercise 1 Coefficient Interpretation
 
 **Exercise 1(a)**
 
--   $\hat{\beta}_1$ (fsize) = -0.0412: The Ceteris paribus effect, an increase in household size by one person is associated with a 4.12% (exact is 4.04% so we can just use the approximation)decrease in household income. This is because the dependent variable is in logs and $fsize$ is in levels, so we have a log-level, therefore the correct interpretation uses $\hat{\beta}_1 \times 100$.
+- $\hat{\beta}_1$ (fsize) = -0.0412: The Ceteris paribus effect, an increase in household size by one person is associated with a 4.12% (exact is 4.04% so we can just use the approximation)decrease in household income. This is because the dependent variable is in logs and $fsize$ is in levels, so we have a log-level, therefore the correct interpretation uses $\hat{\beta}_1 \times 100$.
 
--   $\hat{\beta}_2$ ($\log(tw)$) = 0.2873: With Ceteris paribus, a 1% increase in household wealth is associated with a 0.2873% increase in household income. Since both the dependent variable and the regressor are in logs log-log, the coefficient is interpreted directly as an elasticity (using $\hat{\beta}_2$)
+- $\hat{\beta}_2$ ($\log(tw)$) = 0.2873: With Ceteris paribus, a 1% increase in household wealth is associated with a 0.2873% increase in household income. Since both the dependent variable and the regressor are in logs log-log, the coefficient is interpreted directly as an elasticity (using $\hat{\beta}_2$)
 
--   $\hat{\beta}_6$ (marr) = 0.4217: Ceteris paribus, households where the main earner is married have approximately 52.48% higher annual household income than those where the main earner is not married. This is calculated using the exact formula $(e^{0.4217} - 1)\times 100 \approx 52.48\%$, as the approximate interpretation using $\hat{\beta}_6 \times 100 = 42.17\%$ is less accurate due to the relatively large coefficient(i.e 0.4217).
+- $\hat{\beta}_6$ (marr) = 0.4217: Ceteris paribus, households where the main earner is married have approximately 52.46% higher annual household income than those where the main earner is not married. This is calculated using the exact formula $(e^{0.4217} - 1)\times 100 \approx 52.46\%$, as the approximate interpretation using $\hat{\beta}_6 \times 100 = 42.17\%$ is less accurate due to the relatively large coefficient(i.e 0.4217).
 
-**Exercise 1(b)**
-The model is
+**Exercise 1(b)** The model is
 
-$$
-\log(inc_i) = \hat{\beta}_0 + \hat{\beta}_1 fsize_i + \hat{\beta}_2 \log(tw_i) + \hat{\beta}_3 age_i + \hat{\beta}_4 age_i^2 + \hat{\beta}_5 educ_i + \hat{\beta}_6 marr_i + u_i.
-$$
+$$\log(inc_i) = \hat{\beta}_0 + \hat{\beta}_1 fsize_i + \hat{\beta}_2 \log(tw_i) + \hat{\beta}_3 age_i + \hat{\beta}_4 age_i^2 + \hat{\beta}_5 educ_i + \hat{\beta}_6 marr_i + u_i.$$
 
 The marginal effect of age on $\log(inc)$ is
 
-$$
-\frac{\partial \log(inc)}{\partial age}
-= \hat{\beta}_3 + 2\hat{\beta}_4 \cdot age.
-$$
+$$\frac{\partial \log(inc)}{\partial age}
+= \hat{\beta}_3 + 2\hat{\beta}_4 \cdot age.$$
 
 Evaluating at $age = 25$:
 
-$$
-0.0512 + 2(-0.0006)\cdot 25 = 0.0212.
-$$
+$$0.0512 + 2(-0.0006)\cdot 25 = 0.0212.$$
 
 Ceteris paribus, at age 25, one additional year of age is associated with approximately a 2.12% increase in annual household income.
 
-For the turning point, we have to set the marginal effect of age = 0: $$
-\hat{\beta}_3 + 2\hat{\beta}_4 \cdot age^* = 0
-$$
+For the turning point, we have to set the marginal effect of age = 0: $$\hat{\beta}_3 + 2\hat{\beta}_4 \cdot age^* = 0$$
 
-We rearrange for age and evaluate at the values: $$
-age^* = -\frac{\hat{\beta}_3}{2\hat{\beta}_4}
-$$
+We rearrange for age and evaluate at the values: $$age^* = -\frac{\hat{\beta}_3}{2\hat{\beta}_4}$$
 
-$$
-age^* = -\frac{0.0512}{2(-0.0006)} = 42.67
-$$
+$$age^* = -\frac{0.0512}{2(-0.0006)} = 42.67$$
 
 Therefore, up until age 42.67 then the income will increase, after this point then it will start to decrease.
 
@@ -59,24 +46,20 @@ Therefore, up until age 42.67 then the income will increase, after this point th
 For $\breve{\beta}_1$ (fsize):
 
 1.  $\beta_{tw}$ is likely positive because households with two employed persons should have higher income, therefore $\beta_{tw} > 0$.
-2.  $\delta_1$ is likely positive because larger households are more likely to have(i.e are positivly correlated) two earners, therefore $\mathrm{Cov}(fsize, twoearn) > 0$ and thus $\delta_1 > 0$.
+2.  $\delta_1$ is likely positive because larger households are more likely to have(i.e are positively correlated) two earners, therefore $\mathrm{Cov}(fsize, twoearn) > 0$ and thus $\delta_1 > 0$.
 3.  Therefore, the bias should be positive as $\beta_{tw} > 0$ and $\delta_1 > 0$,so $\breve{\beta}_1$ is biased upward relative to the true coefficient ($\beta_1$).
 
 For $\breve{\beta}_6$ (marr):
 
 1.  $\beta_{tw}$ is likely positive because households with two employed persons should have higher income, therefore $\beta_{tw} > 0$.
-2.  $\delta_6$ is likely positive, as being married is positively corroleted with having 2 earners, as both can work, so $\mathrm{Cov}(marr, twoearn) > 0$ and thus $\delta_6 > 0$.
+2.  $\delta_6$ is likely positive, as being married is positively correlated with having 2 earners, as both can work, so $\mathrm{Cov}(marr, twoearn) > 0$ and thus $\delta_6 > 0$.
 3.  Since $\beta_{tw} > 0$ and $\delta_6 > 0$, the bias $\beta_{tw} \cdot \delta_6$ is positive, therefore $\breve{\beta}_6$ is biased upward relative to the true $\beta_6$.
 
 ## Exercise 3 Residual Patterns and Inference
 
 **Exercise 3(a)**
 
-The Gauss-Markov assumption of homoskedasticity (MLR.5) is called into question, since the variance of the error term appears to increase with education. Formally, this implies that
-$$
-\operatorname{Var}(u_i \mid educ_i) \neq \sigma^2,
-$$
-so the error variance isn't constant across levels of education.
+The Gauss-Markov assumption of homoskedasticity (MLR.5) is called into question, since the variance of the error term appears to increase with education. Formally, this implies that $$\operatorname{Var}(u_i \mid educ_i) \neq \sigma^2,$$ so the error variance isn't constant across levels of education.
 
 **Exercise 3(b)**
 
@@ -84,11 +67,7 @@ OLS is still unbiased as long as the zero conditional mean assumption holds, whi
 
 **Exercise 3(c)**
 
-If we use homoskedasticity-based formula under heteroskedasticity then the standard erros will be wrong and can also be biased. The Hypothesis tests become unreliable as the test statistic wont follow the assumed t-distribution.
-
-## 
-
-
+If we use homoskedasticity-based formula under heteroskedasticity then the standard errors will be wrong and can also be biased. The Hypothesis tests become unreliable as the test statistic won't follow the assumed t-distribution.
 
 ## Exercise 4 Inference for household size
 
@@ -104,9 +83,9 @@ The formula for a standard t-test (testing against a null value of $0$) is: $$t 
 
 Plugging in the estimated coefficient and standard error for $fsize$ from the regression table: $$t = \frac{-0.0412 - 0}{0.0201} = -2.0498$$
 
-**4. The reference distribution under**
+**4. The reference distribution under** $H_0$
 
-$H_0$ Under the null hypothesis, the test statistic follows a $t$-distribution with $N - k - 1$ degrees of freedom. With $N = 534$ households and $k = 6$ regressors: $$df = 534 - 6 - 1 = 527$$
+Under the null hypothesis, the test statistic follows a $t$-distribution with $N - k - 1$ degrees of freedom. With $N = 534$ households and $k = 6$ regressors: $$df = 534 - 6 - 1 = 527$$
 
 The reference distribution is exactly $t_{527}$ (which is asymptotically equivalent to the standard normal $N(0,1)$ distribution due to the large sample size).
 
@@ -159,5 +138,3 @@ Under the assumption of homoscedasticity, the matrix $\Omega$ simplifies to a sc
 **6(d) Unbiasedness vs. Valid Standard Errors**
 
 No, this statement is incorrect. Unbiasedness relies only on the first four Gauss-Markov assumptions (meaning the coefficients are centered correctly), but valid standard errors strictly require the fifth assumption (homoscedasticity) to hold true. Therefore, heteroscedasticity will completely invalidate your standard errors even if your OLS coefficients remain perfectly unbiased.
-
-
