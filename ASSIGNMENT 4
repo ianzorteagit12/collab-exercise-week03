@@ -5,14 +5,14 @@ date: "27 April 2026"
 output:
   html_document:
     theme: cosmo
-    highlight: tango
+    highlight: dracula
 ---
 
 ## Exercise 1 Coefficient Interpretation
 
 **Exercise 1(a)**
 
-- $\hat{\beta}_1$ (fsize) = -0.0412: The Ceteris paribus effect, an increase in household size by one person is associated with a 4.12% (exact is 4.04% so we can just use the approximation)decrease in household income. This is because the dependent variable is in logs and $fsize$ is in levels, so we have a log-level, therefore the correct interpretation uses $\hat{\beta}_1 \times 100$.
+- $\hat{\beta}_1$ (fsize) = -0.0412: Ceteris paribus, an increase in household size by one person is associated with a 4.12% (exact is 4.04% so we can just use the approximation)decrease in household income. This is because the dependent variable is in logs and $fsize$ is in levels, so we have a log-level, therefore the correct interpretation uses $\hat{\beta}_1 \times 100$.
 
 - $\hat{\beta}_2$ ($\log(tw)$) = 0.2873: With Ceteris paribus, a 1% increase in household wealth is associated with a 0.2873% increase in household income. Since both the dependent variable and the regressor are in logs log-log, the coefficient is interpreted directly as an elasticity (using $\hat{\beta}_2$)
 
@@ -130,11 +130,11 @@ The homoscedastic formula assumes the error variance is perfectly constant acros
 **6(b) Misleading homoscedastic standard errors**
 
 As established in Question 3, this specific data exhibits heteroscedasticity because the residual variance physically widens as education increases, directly violating the assumption of a single, constant variance. If we wrongly apply the homoscedastic formula, it forces a single "average" variance onto the entire dataset, which incorrectly estimates the true standard errors. Consequently, these misleading standard errors will produce invalid t-statistics, making any hypothesis tests about the coefficients completely unreliable.
-
 **6(c) Simplification under homoscedasticity**
 
-Under the assumption of homoscedasticity, the matrix $\Omega$ simplifies to a scalar multiplied by the identity matrix ($I$). Mathematically: $$\Omega = \sigma^2 I$$
+Under the assumption of homoscedasticity, the matrix $\Omega$ simplifies to Mathematically: $$\Omega = \sigma^2 I_n$$
+where $\sigma^2$ is the constant error variance and $I_N$ is the $N \times N$ identity matrix.
 
 **6(d) Unbiasedness vs. Valid Standard Errors**
 
-No, this statement is incorrect. Unbiasedness relies only on the first four Gauss-Markov assumptions (meaning the coefficients are centered correctly), but valid standard errors strictly require the fifth assumption (homoscedasticity) to hold true. Therefore, heteroscedasticity will completely invalidate your standard errors even if your OLS coefficients remain perfectly unbiased.
+No, this statement is incorrect, as unbiasedness relies only on the first four Gauss-Markov assumptions (meaning the coefficients are centered correctly), but valid standard errors strictly require the fifth assumption (homoscedasticity) to hold true. Therefore, heteroscedasticity will completely invalidate your standard errors even if your OLS coefficients remain perfectly unbiased.
