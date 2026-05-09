@@ -1,0 +1,88 @@
+---
+title: "Assignment 5: Empirical Methods"
+author: "Jose Penarrieta, Ian Black Monkey"
+format: html
+---
+
+```{r setup, include=FALSE}
+library(dplyr)
+```
+
+```{r, echo=FALSE}
+data <- read.csv("education_income.csv")
+```
+
+## Question 1: Descriptive Analysis
+
+### a) Mean income by college attendance
+
+```{r}
+data %>%
+  group_by(college) %>%
+  summarize(mean_income = mean(income, na.rm = TRUE))
+```
+
+No, we cannot interpret the raw mean income difference as the true causal effect of attending college because of selection bias. In the real world, individuals self-select into college based on unobserved characteristics like innate ability, motivation, or family background. These hidden factors likely increase both the probability of attending college and a person's future income. Because the treatment variable (college attendance) is driven by these hidden traits, it is correlated with the error term, creating an endogeneity problem. Therefore, the raw difference captures both the true causal effect plus the selection bias, leading to an biased estimate.
+
+## Question 2: Assignment Mechanism
+
+### a) Decomposition of the Observed Mean Difference
+
+We start with the raw difference and substitute the general observed outcomes ($Y_i$) with the specific potential outcomes ($Y_{1i}$ and $Y_{0i}$). To isolate the ATET, we subtract and immediately add the unobservable counterfactual $E(Y_{0i} | D_i = 1)$:
+
+$$\begin{align*}
+E(Y_i | D_i = 1) - E(Y_i | D_i = 0) &= E(Y_{1i} | D_i = 1) - E(Y_{0i} | D_i = 0) \\
+&= E(Y_{1i} | D_i = 1) - E(Y_{0i} | D_i = 1) + E(Y_{0i} | D_i = 1) - E(Y_{0i} | D_i = 0) \\
+&= \underbrace{[E(Y_{1i} | D_i = 1) - E(Y_{0i} | D_i = 1)]}_{\text{ATET}} + \underbrace{[E(Y_{0i} | D_i = 1) - E(Y_{0i} | D_i = 0)]}_{\text{Selection Bias}}
+\end{align*}$$
+
+### b) Causal Effect vs. Biased Estimate
+
+$\hat{\beta}_1$ is a biased estimate. Because college attendance is not randomly assigned, individuals self-select into the treatment based on unobserved traits like innate ability, work ethic, or motivation. These traits positively influence both the decision to attend college and future income, meaning they are correlated with the error term ($u_i$), which creates endogeneity. Consequently, the OLS estimate captures both the true educational effect plus the positive selection bias, artificially inflating $\hat{\beta}_1$.
+
+### c) Key Driver of Selection in the Dataset
+
+The `hhincome` (household income) variable is a key confounder driving selection bias. Household wealth is highly correlated with college attendance—not necessarily due to tuition, but because higher-income families often provide a stronger college-going culture, better early academic preparation, and robust support systems. Simultaneously, students from wealthier backgrounds tend to secure higher future incomes regardless of college attendance by leveraging established family networks and resources. Because `hhincome` actively drives both the treatment (`college`) and the outcome (`income`), omitting it from the simple regression directly fuels the selection bias.
+
+### d) Selection on Observables
+
+```{r}
+# Estimate the naive regression (a)
+reg_naive <- lm(income ~ college, data = data)
+
+# Estimate the regression with observed controls
+reg_controls <- lm(income ~ college + hhincome + factor(race) + factor(year), data = data)
+
+# Compare the summaries
+summary(reg_naive)
+summary(reg_controls)
+```
+
+When comparing the two models, the estimated coefficient on college in the controlled regression should be smaller than the naive regression. Adding controls like hhincome helps mitigate selection on observables, stripping away the portion of the bias driven explicitly by family wealth. However, it does not fully address the core concern. Selection on unobservables (such as a student's innate ability, drive, or work ethic) remains trapped in the error term. Because we cannot control for these hidden traits, the coefficient is improved but is likely still a biased estimate of the true causal effect.
+
+### e) Random Assignment
+
+If `scholarship` amounts are randomly assigned, the assignment mechanism is determined by a "coin flip" rather than human choices or hidden traits. Because it is random, the group of students who receive high scholarships and the group who receive low scholarships are, on average, identical in their unobserved characteristics (like innate ability). In the potential outcomes framework, randomization mathematically guarantees that the baseline potential outcomes of the groups are perfectly equal. Because these expected values are equal, the selection bias term subtracts to zero. However, because a scholarship does not strictly force a student to attend, this randomization isolates the true causal effect of the *offer* (Intent-to-Treat), or the Local Average Treatment Effect (LATE) for "compliers" (students who attend college specifically because they received the scholarship).
+
+### f) 2SLS Instrumental Variables
+
+```{r}
+# Load the AER package for Instrumental Variables regression
+library(AER)
+
+# 1. Estimate the First Stage explicitly
+first_stage <- lm(college ~ scholarship + hhincome + factor(race) + factor(year), data = data)
+summary(first_stage)
+
+# 2. Estimate the 2SLS IV Model
+iv_model <- ivreg(income ~ college + hhincome + factor(race) + factor(year) | 
+                  scholarship + hhincome + factor(race) + factor(year), 
+                  data = data)
+summary(iv_model)
+```
+
+**First Stage:** First Stage: The summary shows scholarship is a highly statistically significant predictor of college attendance, satisfying the Relevance Assumption ($Cov(z,D)≠0$) for a strong instrument.
+
+**IV vs. OLS:** By isolating only the exogenous variation driven by the random scholarship, the IV mathematically filters out endogeneity. Consequently, the IV coefficient for `college` is different (likely smaller) than the controlled OLS estimate, as the upward omitted variable bias is removed.
+
+**Causal Interpretation:** This estimate is plausibly causal but relies on the untestable Exclusion Restriction. Random assignment guarantees exogeneity ($Cov(z,u) = 0$). However, we must assume scholarships affect future income only through college attendance. If a prestigious scholarship directly signals high ability to employers, this restriction is violated. Therefore, causality holds only if this strict assumption is met.
