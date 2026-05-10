@@ -1,0 +1,326 @@
+---
+title: "Assignment 5: Empirical Methods"
+author: "Jose Penarrieta, Ian Black Monkey"
+format: html
+editor: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE,
+  message = FALSE
+)
+
+# Load required packages
+library(dplyr)
+library(skimr)
+library(AER)
+library(lfe)
+library(marginaleffects)
+
+# Load the dataset
+data <- read.csv("education_income.csv")
+
+# Clean the dataset
+# Replace missing-value codes with NA
+data <- data %>%
+  mutate(
+    college = ifelse(college == -1, NA, college),
+    income = ifelse(income == -9999999, NA, income),
+    hhincome = ifelse(hhincome == -9999999, NA, hhincome)
+  )
+
+# Display summary of cleaned data
+skim(data)
+```
+
+## Question 1: Descriptive Analysis
+
+### a) Mean income by college attendance
+
+```{r}
+mean_income_by_college <- data %>%
+  group_by(college) %>%
+  summarize(mean_income = 1000 * mean(income, na.rm = TRUE))
+
+mean_income_by_college
+```
+
+```{r}
+# Difference in means
+income_college <- 1000 * mean(data$income[data$college == 1], na.rm = TRUE)
+
+income_noCollege <- 1000 * mean(data$income[data$college == 0], na.rm = TRUE)
+
+difference <- income_college - income_noCollege
+
+difference
+```
+
+No, we cannot interpret the raw mean income difference as the causal
+effect of attending college because of selection bias. In the real
+world, individuals self-select into college based on unobserved
+characteristics like innate ability, motivation, or family background.
+These hidden factors likely increase both the probability of attending
+college and a person's future income. Because the treatment variable,
+college attendance, is driven by these hidden traits, it is correlated
+with the error term, creating an endogeneity problem. Therefore, the raw
+difference captures both the causal effect and the selection bias,
+making it likely biased.
+
+## Question 2: Assignment Mechanism
+
+### a) Decomposition of the Observed Mean Difference
+
+We start with the raw difference and substitute the general observed
+outcomes ($Y_i$) with the specific potential outcomes ($Y_{1i}$ and
+$Y_{0i}$). To isolate the ATET, we subtract and immediately add the
+unobservable counterfactual $E(Y_{0i} | D_i = 1)$:
+
+$$\begin{align*}
+E(Y_i | D_i = 1) - E(Y_i | D_i = 0) &= E(Y_{1i} | D_i = 1) - E(Y_{0i} | D_i = 0) \\
+&= E(Y_{1i} | D_i = 1) - E(Y_{0i} | D_i = 1) + E(Y_{0i} | D_i = 1) - E(Y_{0i} | D_i = 0) \\
+&= \underbrace{[E(Y_{1i} | D_i = 1) - E(Y_{0i} | D_i = 1)]}_{\text{ATET}} + \underbrace{[E(Y_{0i} | D_i = 1) - E(Y_{0i} | D_i = 0)]}_{\text{Selection Bias}}
+\end{align*}$$
+
+### b) Causal Effect vs. Biased Estimate
+
+$\hat{\beta}_1$ is a biased estimate. Because college attendance is not
+randomly assigned, individuals self-select into the treatment based on
+unobserved traits like innate ability, work ethic, or motivation. These
+traits positively influence both the decision to attend college and
+future income, meaning they are correlated with the error term ($u_i$),
+which creates endogeneity. Consequently, the OLS estimate captures both
+the true educational effect plus the positive selection bias,
+artificially inflating $\hat{\beta}_1$.
+
+### c) Key Driver of Selection in the Dataset
+
+The `hhincome` (household income) variable is a key confounder driving
+selection bias. Household wealth is highly correlated with college
+attendance—not necessarily due to tuition, but because higher-income
+families often provide a stronger college-going culture, better early
+academic preparation, and robust support systems. Simultaneously,
+students from wealthier backgrounds tend to secure higher future incomes
+regardless of college attendance by leveraging established family
+networks and resources. Because `hhincome` actively drives both the
+treatment (`college`) and the outcome (`income`), omitting it from the
+simple regression directly fuels the selection bias.
+
+### d) Selection on Observables
+
+```{r}
+# Estimate the naive regression (a)
+reg_naive <- lm(income ~ college, data = data)
+
+# Estimate the regression with observed controls
+reg_controls <- lm(income ~ college + hhincome + factor(race) + factor(year), data = data)
+
+# Compare the summaries
+summary(reg_naive)
+summary(reg_controls)
+```
+
+When comparing the two models, the estimated coefficient on college in
+the controlled regression should be smaller than the naive regression.
+Adding controls like hhincome helps mitigate selection on observables,
+stripping away the portion of the bias driven explicitly by family
+wealth. However, it does not fully address the core concern. Selection
+on unobservables (such as a student's innate ability, drive, or work
+ethic) remains trapped in the error term. Because we cannot control for
+these hidden traits, the coefficient is improved but is likely still a
+biased estimate of the true causal effect.
+
+### e) Random Assignment
+
+If `scholarship` amounts are randomly assigned, the assignment mechanism
+is determined by a "coin flip" rather than human choices or hidden
+traits. Because it is random, the group of students who receive high
+scholarships and the group who receive low scholarships are, on average,
+identical in their unobserved characteristics (like innate ability). In
+the potential outcomes framework, randomization mathematically
+guarantees that the baseline potential outcomes of the groups are
+perfectly equal. Because these expected values are equal, the selection
+bias term subtracts to zero. However, because a scholarship does not
+strictly force a student to attend, this randomization isolates the true
+causal effect of the *offer* (Intent-to-Treat), or the Local Average
+Treatment Effect (LATE) for "compliers" (students who attend college
+specifically because they received the scholarship).
+
+### f) 2SLS Instrumental Variables
+
+```{r}
+# Load the AER package for Instrumental Variables regression
+library(AER)
+
+# 1. Estimate the First Stage explicitly
+first_stage <- lm(college ~ scholarship + hhincome + factor(race) + factor(year), data = data)
+summary(first_stage)
+
+# 2. Estimate the 2SLS IV Model
+iv_model <- ivreg(income ~ college + hhincome + factor(race) + factor(year) | 
+                  scholarship + hhincome + factor(race) + factor(year), 
+                  data = data)
+summary(iv_model)
+```
+
+**First Stage:** First Stage: The summary shows scholarship is a highly
+statistically significant predictor of college attendance, satisfying
+the Relevance Assumption ($Cov(z,D)≠0$) for a strong instrument.
+
+**IV vs. OLS:** By isolating only the exogenous variation driven by the
+random scholarship, the IV mathematically filters out endogeneity.
+Consequently, the IV coefficient for `college` is different (likely
+smaller) than the controlled OLS estimate, as the upward omitted
+variable bias is removed.
+
+**Causal Interpretation:** This estimate is plausibly causal but relies
+on the untestable Exclusion Restriction. Random assignment guarantees
+exogeneity ($Cov(z,u) = 0$). However, we must assume scholarships affect
+future income only through college attendance. If a prestigious
+scholarship directly signals high ability to employers, this restriction
+is violated. Therefore, causality holds only if this strict assumption
+is met.
+
+## Question 3: Effect Heterogeneity
+
+### a)
+
+The regression equation is:
+
+$$
+income_i = \beta_0 + \beta_1 college_i + \beta_2 race_i + \beta_3(college_i \times race_i) + u_i
+$$
+
+The coefficient $\beta_3$ on the interaction term captures the
+heterogeneous effect of college across the race groups. It measures how
+the effect of college on income differs between individuals with
+$race = 1$ and individuals with $race = 0$.
+
+### b) R-estimation
+
+```{r}
+# Interaction regression
+model_1 <- felm(income ~ college * race, data = data)
+
+# The regression results
+summary(model_1, robust = TRUE)
+```
+
+### c) Marginal effect of college_i
+
+The marginal effect of college on income is obtained by taking the
+derivative w.r.t $college_i$:
+
+$$
+\frac{\partial income_i}{\partial college_i}
+=
+\beta_1 + \beta_3 race_i
+$$
+
+```{r}
+# Subbing in the values 
+
+# Effect of college when race = 0
+effect_race0 <- 1000 * coef(model_1)["college"]
+
+# Effect of college when race = 1
+effect_race1 <- 1000 * ( 
+  coef(model_1)["college"] +
+  coef(model_1)["college:race"]
+)
+
+# Results
+effect_race0
+effect_race1
+```
+
+### d) P-value
+```{r}
+# state p-value for interaction term
+model_1_summary <- summary(model_1, robust = TRUE)
+
+interaction_pvalue <- model_1_summary$coefficients["college:race", "Pr(>|t|)"]
+
+interaction_pvalue
+```
+The p-value of the interaction term is approximately 0.216.
+
+Since the p-value is greater than 0.05, the interaction effect is not statistically significant at the standard 5% significance level. 
+Therefore, we do not find strong evidence that the effect of college on income differs across race groups.
+
+## Question 4:
+### a) Limitation of OLS 
+
+A specific limitation of using OLS, for a binary dependent variable is that it can sometimes produce probabilities that are outside of the meaningful interval [0, 1]. Therefore, as OLS is an unconstrained linear model this may give a negative probability or one larger than 1 for attending college. 
+
+### b) Probit and Logit Model
+```{r}
+# Probit model 
+probit_model <- glm(
+  college ~ hhincome + race,
+  data = data, family = binomial(link = "probit")
+  )
+
+# Logit model
+logit_model <- glm(
+  college ~ hhincome + race,
+  data = data,
+  family = binomial(link = "logit")
+)
+
+summary(probit_model)
+summary(logit_model)
+```
+
+
+Both the probit and logit models agree on the direction of the effects, therefore the signs and significance are meaningful. The coefficient on `hhincome` is positive and statistically significant. Higher household income is associated with a higher probability of attending college. For the magnitude, the logit coefficient is 1.7 times larger than the probit coefficient. However, this is expected due to different scaling and linking functions, so the marginal effects on probability are roughly the same.
+
+The coefficient on `race` is negative and statistically significant for both models. The negative sign, holding household income constant, indicates that individuals with `race = 1` are predicted to have a lower probability of attending college than individuals with `race = 0`. The logit coefficient is about 1.7 times larger than the probit coefficient, this was also expected. The raw magnitudes should not be interpreted directly as percentage-point effects.
+
+## Question 5:
+
+### a) Average Partial Effect Formula in Probit Model
+
+For a probit model,
+
+$$
+P(Y_i = 1 \mid X_i) = \Phi(X_i'\beta)
+$$
+
+The Average Partial Effect (APE) of a continuous variable $x_j$ is:
+
+$$
+APE_j = \frac{1}{n}\sum_{i=1}^{n} \phi(X_i'\hat{\beta})\hat{\beta}_j
+$$
+
+where $\phi(\cdot)$ is the standard normal probability density function and $\hat{\beta}_j$ is the estimated coefficient on $x_j$.
+
+### b) APE of hhincome
+```{r}
+# average partial effects of hhincome
+ape_hhincome <- avg_slopes(probit_model, variables = "hhincome")
+
+# Result
+print(ape_hhincome)
+```
+The estimated Average Partial Effect (APE) of `hhincome` is approximately *0.00316*. 
+Since `hhincome` is measured in thousand USD, a $1,000 increase in household income increases 
+the probability of attending college by approximately 0.316 percentage points on average, holding other variables constant. 
+The 95% confidence interval [0.00294, 0.00339] does not contain zero, confirming statistical significance.
+
+### c) Predicted Probability with Values
+```{r}
+individual1 <- data.frame(hhincome = 80, race = 1)
+predicted_pr <- predict(probit_model,
+                        newdata = individual1,
+                        type = "response")
+print(predicted_pr)
+
+# verify it is within the bounds
+cat("\nWithin bounds [0,1]?", predicted_pr > 0 & predicted_pr < 1)
+
+```
