@@ -1,6 +1,6 @@
 ---
 title: "Assignment 5: Empirical Methods"
-author: "Jose Penarrieta, Ian Black Monkey"
+author: "Jose Penarrieta, Ian Zortea"
 format: html
 editor: 
   markdown: 
@@ -13,19 +13,23 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE
 )
+```
 
-# Load required packages
+## Load packages
+
+```{r}
 library(dplyr)
 library(skimr)
 library(AER)
 library(lfe)
 library(marginaleffects)
+```
 
-# Load the dataset
+## Data cleaning
+
+```{r}
 data <- read.csv("education_income.csv")
 
-# Clean the dataset
-# Replace missing-value codes with NA
 data <- data %>%
   mutate(
     college = ifelse(college == -1, NA, college),
@@ -33,7 +37,6 @@ data <- data %>%
     hhincome = ifelse(hhincome == -9999999, NA, hhincome)
   )
 
-# Display summary of cleaned data
 skim(data)
 ```
 
@@ -324,3 +327,4 @@ print(predicted_pr)
 cat("\nWithin bounds [0,1]?", predicted_pr > 0 & predicted_pr < 1)
 
 ```
+
