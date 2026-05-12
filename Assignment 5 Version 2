@@ -198,13 +198,11 @@ The p-value of the interaction term is approximately 0.216.
 Since the p-value is greater than 0.05, the interaction effect is not statistically significant at the standard 5% significance level. Therefore, we do not find strong evidence that the effect of college on income differs across race groups.
 
 ## Question 4:
+### a) Limitation of OLS 
 
-### a) Limitation of OLS
-
-A specific limitation of using OLS, for a binary dependent variable is that it can sometimes produce probabilities that are outside of the meaningful interval \[0, 1\]. Therefore, as OLS is an unconstrained linear model this may give a negative probability or one larger than 1 for attending college.
+A specific limitation of using OLS, for a binary dependent variable is that it can sometimes produce probabilities that are outside of the meaningful interval [0, 1]. Therefore, as OLS is an unconstrained linear model this may give a negative probability or one larger than 1 for attending college. 
 
 ### b) Probit and Logit Model
-
 ```{r}
 # Probit model 
 probit_model <- glm(
@@ -223,6 +221,7 @@ summary(probit_model)
 summary(logit_model)
 ```
 
+
 Both the probit and logit models agree on the direction of the effects, therefore the signs and significance are meaningful. The coefficient on `hhincome` is positive and statistically significant. Higher household income is associated with a higher probability of attending college. For the magnitude, the logit coefficient is 1.7 times larger than the probit coefficient. However, this is expected due to different scaling and linking functions, so the marginal effects on probability are roughly the same.
 
 The coefficient on `race` is negative and statistically significant for both models. The negative sign, holding household income constant, indicates that individuals with `race = 1` are predicted to have a lower probability of attending college than individuals with `race = 0`. The logit coefficient is about 1.7 times larger than the probit coefficient, this was also expected. The raw magnitudes should not be interpreted directly as percentage-point effects.
@@ -233,16 +232,19 @@ The coefficient on `race` is negative and statistically significant for both mod
 
 For a probit model,
 
-$$P(Y_i = 1 \mid X_i) = \Phi(X_i'\beta)$$
+$$
+P(Y_i = 1 \mid X_i) = \Phi(X_i'\beta)
+$$
 
 The Average Partial Effect (APE) of a continuous variable $x_j$ is:
 
-$$APE_j = \frac{1}{n}\sum_{i=1}^{n} \phi(X_i'\hat{\beta})\hat{\beta}_j$$
+$$
+APE_j = \frac{1}{n}\sum_{i=1}^{n} \phi(X_i'\hat{\beta})\hat{\beta}_j
+$$
 
 where $\phi(\cdot)$ is the standard normal probability density function and $\hat{\beta}_j$ is the estimated coefficient on $x_j$.
 
 ### b) APE of hhincome
-
 ```{r}
 # average partial effects of hhincome
 ape_hhincome <- avg_slopes(probit_model, variables = "hhincome")
@@ -250,8 +252,10 @@ ape_hhincome <- avg_slopes(probit_model, variables = "hhincome")
 # Result
 print(ape_hhincome)
 ```
-
-The estimated Average Partial Effect (APE) of `hhincome` is approximately *0.00316*. Since `hhincome` is measured in thousand USD, a \$1,000 increase in household income increases the probability of attending college by approximately 0.316 percentage points on average, holding other variables constant. The 95% confidence interval \[0.00294, 0.00339\] does not contain zero, confirming statistical significance.
+The estimated Average Partial Effect (APE) of `hhincome` is approximately *0.00316*. 
+Since `hhincome` is measured in thousand USD, a $1,000 increase in household income increases 
+the probability of attending college by approximately 0.316 percentage points on average, holding other variables constant. 
+The 95% confidence interval [0.00294, 0.00339] does not contain zero, confirming statistical significance.
 
 ### c) Predicted Probability with Values
 
