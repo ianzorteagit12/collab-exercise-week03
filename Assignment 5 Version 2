@@ -1,10 +1,11 @@
 ---
 title: "Assignment 5: Empirical Methods"
-author: "Jose Penarrieta, Ian Zortea"
-format: html
-editor: 
-  markdown: 
-    wrap: 72
+author: "Ian Zortea, Jose Penarrieta"
+date: "12 May 2026"
+output:
+  html_document:
+    theme: cosmo
+    highlight: breezedark
 ---
 
 ```{r setup, include=FALSE}
@@ -190,9 +191,9 @@ is met.
 
 ## Question 3: Effect Heterogeneity
 
-### a)
+### a) Regression Equation
 
-The regression equation is:
+We estimqate the following regression equation:
 
 $$
 income_i = \beta_0 + \beta_1 college_i + \beta_2 race_i + \beta_3(college_i \times race_i) + u_i
@@ -200,8 +201,17 @@ $$
 
 The coefficient $\beta_3$ on the interaction term captures the
 heterogeneous effect of college across the race groups. It measures how
-the effect of college on income differs between individuals with
+the effect of college attendance on income differs between individuals with
 $race = 1$ and individuals with $race = 0$.
+
+The marginal effect of college on income is given by
+
+$$
+\frac{\partial income}{\partial college} = \beta_1 + \beta_3 \cdot race_i
+$$
+
+Therefore, for individuals with $race_i = 0$, the effect of college on income is $\beta_1$. While for individuals with $race_i = 1$, the effect is $\beta_1 + \beta_3$.
+
 
 ### b) R-estimation
 
@@ -327,4 +337,5 @@ print(predicted_pr)
 cat("\nWithin bounds [0,1]?", predicted_pr > 0 & predicted_pr < 1)
 
 ```
+
 
