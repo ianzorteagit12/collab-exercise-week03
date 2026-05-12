@@ -273,4 +273,4 @@ cat("Predicted Probability:", clean_pr, "\n")
 cat("Within bounds [0,1]?  ", clean_pr > 0 & clean_pr < 1, "\n")
 ```
 
-The predicted probability of attending college for an individual with `hhincome = 80` and `race = 1` is 0.740. This means there is a 74% chance of college attendance given these characteristics. By passing the linear index through the standard normal CDF via `type = "response"`, the probit model guarantees the output is bounded in \[0,1\], directly overcoming the OLS limitation discussed in Question 4(a).
+The predicted probability of attending college for an individual with `hhincome = 80` and `race = 1` is 0.740. This means there is a 74% chance of college attendance given these characteristics. By passing the linear index through the standard normal CDF via `type = "response"`, the probit model guarantees the output is bounded in [0,1], directly overcoming the OLS limitation discussed in Question 4(a).
